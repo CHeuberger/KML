@@ -1,0 +1,64 @@
+ 
+******* OPEN AIR ™ LANGUAGE ************* 
+Version 1.00 
+December 10, 1998 
+Updated October 15, 1999 
+
+AIRSPACE-related record types: 
+============================== 
+
+AC  class  ; where class can be: 
+  R                       restricted 
+  Q                       danger 
+  P                       prohibited 
+  A                       Class A 
+  B                       Class B 
+  C                       Class C 
+  D                       Class D  
+  GP                      glider prohibited  
+  CTR                     CTR 
+  W                       Wave Window 
+
+AN string      ;string = Airspace Name 
+AH string      ;string = Airspace Ceiling 
+AL string      ;string = Airspace Floor 
+AT coordinate  ;coordinate = Coordinate of where to place a name label on the map (optional) 
+NOTE: there can be multiple AT records for a single airspace segment 
+   
+
+TERRAIN-related record types (NYI): 
+============================== 
+ 
+TO {string}    ; Declares Terrain Open Polygon; string = name (optional) 
+TC {string)    ; Declares Terrain Closed Polygon; string = name  (optional) 
+SP style, width, red, green, blue    ; Selects Pen to be used in drawing 
+PEN STYLES in SP command: 
+       SOLID               0 
+       DASH                1 
+       NULL (transparent)  5 
+ 
+Example: for a 1 pixel wide, dashed, light gray pen use: SP 0,1,192,192,192 
+SB  red, green, blue ; Selects Brush Color to be used in drawing 
+Example: to select white interior of a closed polygon, use: SB 255, 255, 255  
+To select transparent interior use: SB -1,-1,-1 
+  
+
+Record types common to both TERRAIN and AIRSPACE 
+============================== 
+V x=n    ; Variable assignment. 
+Currently the following variables are supported: 
+D={+|-}    ;sets direction for: DA and DB records 
+  ‘-‘ means counterclockwise direction; 
+  ‘+’ is the default; 
+  D is automatically reset to ‘+’ at the begining of new airspace segment   
+X=coordinate    ; sets the center for the following records: DA, DB, and DC   
+Z=number    ; makes the element invisible at zoom levels > number 
+T=1    ; transparent Airspace segment (draw border only) 
+
+
+DP coordinate    ;add polygon point 
+DA radius, angleStart angleEnd    ; add an arc, angles in degrees, radius in nm 
+DB coordinate1, coordinate2    ; add an arc, from coordinate1 to coordinate2 
+DC radius    ; draw a circle (center taken from the previous V X record, radius in nm 
+ 
+

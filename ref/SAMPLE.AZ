@@ -1,0 +1,118 @@
+* Sample AZ format file
+* (Open with NOTEPAD to see all comments)
+
+
+* Comment line starts with '*'
+* Comments only outside airspace data
+* empty lines only outside airspace data
+
+
+*----------------------------------------------------------------------------------------------
+* N = name 12 characters (last character may be type of airspace)
+* followed by upper level in ft with altitude type GND, MSL, FL (FL130=00000 FL, UNL=99999 MSL)
+* followed by lower level in ft with altitude type GND, MSL, FL (FL130=00000 FL, SFC=00000 GND)
+* S = start point with degrees, minutes, seconds
+*     ('S' used for airspaces drawn clockwise, 'I' used for airspaces drawn counterclockwise)
+* L = end point of line
+*     (last point must be same as start point for closed airspace figures)
+
+N ANSBACH    D
+  03000 MSL
+  00000 GND
+S 491438N 0103120E
+L 492033N 0102932E
+L 492227N 0104438E
+L 491633N 0104625E
+L 491438N 0103120E
+
+
+*----------------------------------------------------------------------------------------------
+* A = endpoint of arc
+* followed by center point of arc
+* followed by radius of arc in NM only, plus = clockwise around center
+
+N BUECKEBURG D
+  02500 MSL
+  00000 GND
+S 521229N 0085636E
+L 521821N 0085422E
+L 521847N 0085728E
+A 522035N 0091012E
+  521645N 0090500E
+  +005.000 NM
+L 522043N 0091111E
+A 521451N 0091325E
+  521746N 0091210E
+  +003.000 NM
+L 521229N 0085636E
+
+N MUENCHEN   C
+  10000 FL
+  06500 FL
+S 483445N 0110720E
+L 483630N 0112910E
+A 480050N 0114020E
+  482030N 0114645E
+  -020.000 NM
+L 475955N 0112930E
+L 475955N 0111400E
+A 483445N 0110720E
+  482030N 0114645E
+  +030.000 NM
+  
+N STUTTGART  D
+  10000 FL
+  04500 MSL
+S 484949N 0085212E
+L 485227N 0085149E
+L 485512N 0085849E
+L 485730N 0091000E
+L 485604N 0093733E
+L 485257N 0093753E
+L 484949N 0085212E
+
+N WESTERLAND D
+  02600 MSL
+  00000 GND
+S 550032N 0082011E
+L 545944N 0082107E
+A 545305N 0082847E
+  545448N 0082036E
+  +005.000 NM
+L 545034N 0083146E
+L 544710N 0082241E
+L 545705N 0081121E
+L 550032N 0082011E
+
+
+*----------------------------------------------------------------------------------------------
+* C = circle
+* followed by center point
+* followed by radius in NM only, always plus
+
+N WIEN       D
+  02500 MSL
+  00000 GND
+C 480639N 0163415E
+  +010.000 NM
+
+  
+*----------------------------------------------------------------------------------------------
+* Airspaces are normally drawn clockwise and should be closed figures
+* Open lines: left side of line shows plus distance, right side shows minus on ZS1/SR940
+ 
+* example for open line:
+
+N ALPENLINIE A			
+  10000 FL
+  00000 GND
+S 475730N 0125400E
+L 474300N 0111000E
+L 474300N 0102900E
+L 473600N 0094800E
+
+
+* Allowed characters for airspace and waypoint names:
+* ABCDEFGHIJKLMNOPQRSTUVWXYZ-/:#.0123456789* and space  (no tabs allowed!)
+
+* The last line must end with a carriage return / line feed.

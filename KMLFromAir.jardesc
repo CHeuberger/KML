@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="D:/TMP/KMLFromOpenAir.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/KML/KMLFromAir.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=KML/src\/java&lt;cfh.kml{FromOpenAir.java[FromOpenAir" manifestLocation="/Taxi/manifest.txt" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <javaElement handleIdentifier="=KML/src\/java"/>
+        <file path="/KML/Zander FromOpenAir.launch"/>
+        <file path="/KML/.project"/>
+        <file path="/KML/.classpath"/>
+        <file path="/KML/ZanderFromOpenAir.jardesc"/>
+        <file path="/KML/KML FromOpenAir.launch"/>
+    </selectedElements>
+</jardesc>

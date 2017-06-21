@@ -1,0 +1,33 @@
+
+AC class               ; class = Airspace Class, see below:
+    R restricted
+    Q danger
+    P prohibited
+    A Class A
+    B Class B
+    C Class C
+    D Class D
+    GP glider prohibited
+    CTR CTR
+    W Wave Window
+    TMZ TMZ
+
+AN string                          ; string = Airspace Name
+AH string                          ; string = Airspace Ceiling  { FLxyz | xyz(m|km|ft|)(GND|MSL|) }
+AL string                          ; string = Airspace Floor    { FLxyz | xyz(m|km|ft|)(AGL|GND|MSL|) }
+V x=n                              ; Variable assignment.
+
+                                   ;     D={+|-}    sets direction for: DA and DB records
+                                   ;                '-' means counterclockwise direction; '+' is the default
+                                   ;                automatically reset to '+' at the begining of new airspace segment   
+                                   ;     X=coordinate    : sets the center for the following records: DA, DB, and DC   
+SB red, green, blue                ; Selects Brush to be used in drawing
+SP style, width, red, green, blue  ; Selects Pen to be used in drawing
+
+DA radius, angleStart, angleEnd    ; add an arc, angles in degrees, radius in nm (set center using V X=...)
+DB coordinate1, coordinate2        ; add an arc, from coordinate1 to coordinate2 (set center using V X=...)
+DC radius                          ; draw a circle (center taken from the previous V X=...  record, radius in nm
+DP coordinate                      ; add polygon pointC
+
+
+

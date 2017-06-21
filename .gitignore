@@ -1,0 +1,7 @@
+/build/
+/.settings/
+/*.kml
+/*.txt
+*~
+*.swp
+*.bak
