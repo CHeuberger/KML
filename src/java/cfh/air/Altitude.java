@@ -3,17 +3,21 @@ package cfh.air;
 public class Altitude {
 
     public enum Type {
-        GND,
-        MSL,
-        FL;
+        /** Altitude relative to ground. */         GND,
+        /** Altitude relative to Mean Sea Level. */ MSL,
+        /** Flight level (feet/100, QNE). */        FL;
     }
     
     private final Type type;
     private final double value;  // meters
 
+    /**
+     * @param type Type.GND, Type.MSL or Type.FL
+     * @param value altitude value in meters
+     */
     public Altitude(Type type, double value) {
         if (type == null) throw new IllegalArgumentException("null");
-        if (!(value >= 0)) throw new IllegalArgumentException(Double.toString(value));
+        if (value < 0) throw new IllegalArgumentException(Double.toString(value));
         
         this.type = type;
         this.value = value;

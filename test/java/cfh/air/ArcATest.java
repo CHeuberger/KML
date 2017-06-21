@@ -2,10 +2,9 @@ package cfh.air;
 
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
+import static org.hamcrest.Matchers.*;
 
 import java.util.List;
-
-import static org.hamcrest.Matchers.*;
 
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -29,6 +28,8 @@ public class ArcATest {
     
     @DataPoints("dir")
     public static boolean[] directions = { false, true };
+    
+    private static final double ERR = 1E-5;
 
     
     @Theory
@@ -70,11 +71,11 @@ public class ArcATest {
         test = arc.getPoints(0);
         assertThat(test.size(), is (2));
         start = test.get(0);
-        assertThat(start.getLatitude(), closeTo(startLat, 0.0001));
-        assertThat(start.getLongitude(), closeTo(startLon, 0.0001));
+        assertThat(start.getLatitude(), closeTo(startLat, ERR));
+        assertThat(start.getLongitude(), closeTo(startLon, ERR));
         end = test.get(1);
-        assertThat(end.getLatitude(), closeTo(endLat, 0.0001));
-        assertThat(end.getLongitude(), closeTo(endLon, 0.0001));
+        assertThat(end.getLatitude(), closeTo(endLat, ERR));
+        assertThat(end.getLongitude(), closeTo(endLon, ERR));
         
         arc = new ArcA(Segment.MILES_PER_DEGREE, 180, 270, center, false);
         startLat = center.getLatitude() - 1;
@@ -85,11 +86,11 @@ public class ArcATest {
         test = arc.getPoints(0);
         assertThat(test.size(), is (2));
         start= test.get(0);
-        assertThat(start.getLatitude(), closeTo(startLat, 0.0001));
-        assertThat(start.getLongitude(), closeTo(startLon, 0.0001));
+        assertThat(start.getLatitude(), closeTo(startLat, ERR));
+        assertThat(start.getLongitude(), closeTo(startLon, ERR));
         end = test.get(1);
-        assertThat(end.getLatitude(), closeTo(endLat, 0.0001));
-        assertThat(end.getLongitude(), closeTo(endLon, 0.0001));
+        assertThat(end.getLatitude(), closeTo(endLat, ERR));
+        assertThat(end.getLongitude(), closeTo(endLon, ERR));
     }
 
     @Test
