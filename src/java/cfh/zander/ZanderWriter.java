@@ -5,7 +5,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import javax.swing.JOptionPane;
 
@@ -32,7 +31,8 @@ public class ZanderWriter {
     private final Writer writer;
     
     public ZanderWriter(Writer writer, String... comments) throws IOException {
-        this.writer = Objects.requireNonNull(writer);
+        if (writer == null) throw new IllegalArgumentException("null");
+        this.writer = writer;
         
         if (comments != null) {
             for (String comment : comments) {

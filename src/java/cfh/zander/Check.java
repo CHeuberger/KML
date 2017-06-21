@@ -20,7 +20,7 @@ public class Check {
     private static final Preferences prefs = Preferences.userNodeForPackage(Check.class);
 
     public static void main(String[] args) {
-        Locale.setDefault(Locale.Category.FORMAT, Locale.ROOT);
+        Locale.setDefault(Locale.ROOT);
         
         File dir = new File(prefs.get(PREF_DIRECTORY, "."));
         JFileChooser chooser = new JFileChooser(dir);

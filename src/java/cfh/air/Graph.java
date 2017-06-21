@@ -1,21 +1,12 @@
 package cfh.air;
 
-import static java.nio.file.StandardWatchEventKinds.*;
-import static javax.swing.JOptionPane.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.util.List;
-import java.util.Locale;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFileChooser;
@@ -43,42 +34,14 @@ public class Graph {
     private JFrame frame;
     private GraphPanel graph = new GraphPanel();
     
-    private final WatchService watcher;
-    private WatchKey watchKey = null;
-    private File watchFile = null;
-    
     
     private Graph(String[] args) {
-        Locale.setDefault(Locale.Category.FORMAT, Locale.ROOT);
-        
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 initGUI();
             }
         });
-        
-        WatchService ws;
-        try {
-            ws = FileSystems.getDefault().newWatchService();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            showMessageDialog(null, ex.getMessage(), ex.getClass().getSimpleName(), WARNING_MESSAGE);
-            ws = null;
-        }
-        watcher = ws;
-        
-        if (watcher != null) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    watchLoop();
-                }
-            });
-            thread.setName("Watcher Thread");
-            thread.setDaemon(true);
-            thread.start();
-        }
     }
     
     private void initGUI() {
@@ -133,22 +96,6 @@ public class Graph {
         prefs.put(PREF_DIRECTORY, dir.getAbsolutePath());
         
         readAirspaces(file);
-        
-        if (watcher != null) {
-            if (watchKey != null) {
-                watchKey.cancel();
-                watchKey = null;
-            }
-            watchFile = file;
-            try {
-                watchKey = dir.toPath().register(watcher, ENTRY_MODIFY);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                showMessageDialog(frame, ex.getMessage(), ex.getClass().getSimpleName(), ERROR_MESSAGE);
-                watchFile = null;
-                watchKey = null;
-            }
-        }
     }
 
     private void readAirspaces(File file) {
@@ -182,27 +129,6 @@ public class Graph {
             }
         } catch (IOException ex) {
             ex.printStackTrace();
-        }
-    }
-    
-    private void watchLoop() {
-        while (watcher != null && !Thread.interrupted()) {
-            WatchKey key;
-            try {
-                key = watcher.take();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-                break;
-            }
-            for (WatchEvent<?> event : key.pollEvents()) {
-                if (event.kind() == ENTRY_MODIFY && watchFile != null) {
-                    Path path = (Path) event.context();
-                    if (watchFile.toPath().endsWith(path)) {
-                        readAirspaces(watchFile);
-                    }
-                }
-            }
-            key.reset();
         }
     }
 }
