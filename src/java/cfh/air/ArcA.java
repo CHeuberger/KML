@@ -25,6 +25,13 @@ public class ArcA implements Segment {
     private final Point center;
     private final boolean clockwise;
     
+    /**
+     * @param radius nautical mile
+     * @param startAngle degrees, 0° is north, 90° is east
+     * @param endAngle degrees
+     * @param center 
+     * @param clockwise
+     */
     public ArcA(double radius, double startAngle, double endAngle, Point center, boolean clockwise) {
         if (radius < 0) throw new IllegalArgumentException(Double.toString(radius));
         if (startAngle < 0 || startAngle > 360) throw new IllegalArgumentException(Double.toString(startAngle));
@@ -38,12 +45,20 @@ public class ArcA implements Segment {
         this.clockwise = clockwise;
     }
     
-    public Point getCenter() {
-        return center;
-    }
-    
     public double getRadius() {
         return radius;
+    }
+    
+    public double getStartAngle() {
+        return startAngle;
+    }
+    
+    public double getEndAngle() {
+        return endAngle;
+    }
+    
+    public Point getCenter() {
+        return center;
     }
     
     public boolean isClockwise() {
@@ -55,7 +70,7 @@ public class ArcA implements Segment {
         assert step >= 0 : step;
         double start = toRadians(startAngle);
         double end = toRadians(endAngle);
-        double r = radius / 60.0311975044;  // �/nm
+        double r = radius / MILES_PER_DEGREE;
         
         if (clockwise) {
             if (end <= start) {
@@ -117,7 +132,7 @@ public class ArcA implements Segment {
     public Point draw(Graphics2D gg, Point last) {
         double start = startAngle;
         double end = endAngle;
-        double r = radius  / 60.0311975044;  // �/nm
+        double r = radius  / MILES_PER_DEGREE;
         
         if (clockwise) {
             if (end <= start) {

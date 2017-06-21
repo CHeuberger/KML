@@ -5,9 +5,12 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public interface Segment {
+    
+    public static final double MILES_PER_DEGREE = 60.0311975044;
 
     /**
-     * @param step degrees, 0: center for circle, start for arcs
+     * @param step degrees, 
+     *        if 0 return: center for circle or end points for arcs
      * @return
      */
     public List<Point> getPoints(int step);

@@ -11,9 +11,15 @@ import java.util.List;
 
 public class Point implements Segment {
 
+    /** degrees */
     private final double latitude;
+    /** degrees */
     private final double longitude;
     
+    /**
+     * @param latitude degrees
+     * @param longitude degrees
+     */
     public Point(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;

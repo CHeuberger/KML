@@ -188,7 +188,7 @@ public class OpenAirReader {
                     factor = 1000;
                 }
                 
-                if (matcher.group(3).equals("AGL") || matcher.group(3).equals("GND")) {
+                if (matcher.group(3).equals("AGL") || matcher.group(3).equals("GND") || matcher.group(3).equals("SFC")) {
                     type = GND;
                 } else {
                     type = MSL;

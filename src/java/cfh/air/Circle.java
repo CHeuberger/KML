@@ -40,7 +40,7 @@ public class Circle implements Segment {
             return Collections.singletonList(center);
         }
         
-        double r = radius / 60.0311975044;  // �/nm
+        double r = radius / MILES_PER_DEGREE;
         
         int n = 360 / step;
         double angleStep = (clockwise ? 2 : -2) * PI / n;
@@ -58,7 +58,7 @@ public class Circle implements Segment {
     
     @Override
     public Rectangle2D getBound() {
-        double r = radius/ 60.0311975044;  // �/nm
+        double r = radius/ MILES_PER_DEGREE;
         double x = center.getLongitude() - r;
         double y = center.getLatitude()  - r;
         return new Rectangle2D.Double(x, y, 2*r, 2*r);
@@ -66,7 +66,7 @@ public class Circle implements Segment {
     
     @Override
     public Point draw(Graphics2D gg, Point last) {
-        double r = this.radius / 60.0311975044;  // �/nm
+        double r = this.radius / MILES_PER_DEGREE;
         if (last != null) {
             gg.draw(new Line2D.Double(last.getLongitude(), last.getLatitude(), center.getLongitude(), center.getLatitude()));
         }
