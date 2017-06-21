@@ -17,5 +17,6 @@ public interface Segment {
     
     public Rectangle2D getBound();
     
+    @Deprecated
     public Point draw(Graphics2D gg, Point last);
 }

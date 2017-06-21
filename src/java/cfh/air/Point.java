@@ -33,6 +33,11 @@ public class Point implements Segment {
         return longitude;
     }
     
+    /**
+     * Direction to another point.
+     * @param point destination point
+     * @return angle from this point to the given point in radians, 0 is north, PI/2 is east
+     */
     public double angleTo(Point point) {
         double angle = atan2(point.longitude - longitude, point.latitude - latitude);
         if (angle < 0) {
