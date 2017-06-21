@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
@@ -53,6 +54,21 @@ public class FromOpenAir {
                         reader.pushback(line);
                     }
                 }
+                
+
+                List<Integer> inverted = new ArrayList<Integer>();
+                line = reader.readLine();
+                if (line.startsWith("##invert ")) {
+                    String[] values = line.split("\\s+");
+                    for (int i = 1; i < values.length; i++) {
+                        try {
+                            inverted.add(Integer.parseInt(values[i]));
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(null, ex.getMessage());
+                            return;
+                        }
+                    }
+                }
 
                 String name = file.getName();
                 int i = name.lastIndexOf('.');
@@ -74,7 +90,7 @@ public class FromOpenAir {
                             writer, 
                             "Converted from OpenAir format to AZ: " + file.getName(),
                             version);
-                    zander.write(airspaces);
+                    zander.write(airspaces, inverted);
                     zander.finish();
                 } finally {
                     writer.close();

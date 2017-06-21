@@ -42,14 +42,14 @@ public class ZanderWriter {
         line();
     }
     
-    public void write(Collection<Airspace> airspaces) throws IOException {
+    public void write(Collection<Airspace> airspaces, List<Integer> invertedAirspaces) throws IOException {
         System.out.printf("%5s  %5s  %-35s  %5s  %s%n", "NR", "LINE", "NAME", "SIZE", "C");
         number = 1;
         for (Airspace airspace : airspaces) {
             if (airspace.getLineNumber() == 0 && airspace.getType() == null) {
                 comment(airspace.getComment());
             } else {
-                write(airspace);
+                write(airspace, invertedAirspaces.contains(number));
             }
         }
     }
@@ -58,7 +58,7 @@ public class ZanderWriter {
         line();
     }
     
-    public void write(Airspace airspace) throws IOException {
+    public void write(Airspace airspace, boolean invert) throws IOException {
         String name = airspace.getName();
         if (name != null && name.length() > 35) {
             name = name.substring(0, 35);
@@ -78,7 +78,7 @@ public class ZanderWriter {
         }
         
         header(airspace);
-        segments(airspace);
+        segments(airspace, invert);
         line();
         number += 1;
 
@@ -109,14 +109,14 @@ public class ZanderWriter {
      *     ('S' used for airspaces drawn clockwise, 'I' used for airspaces drawn counterclockwise)
      * L = end point of line
      */
-    private void segments(Airspace airspace) throws IOException {
+    private void segments(Airspace airspace, boolean invert) throws IOException {
         List<Segment> segments = new ArrayList<Segment>(airspace.getSegments());
         boolean clockwise = isClockwise(segments);
         if (clockwise != isClockwise2(segments)) {
             System.err.printf("%d: inconsistent direction of airspace: %s", airspace.getLineNumber(), airspace.getName());
         }
-        String code = clockwise ? "S " : "I ";
-        System.out.printf("  %1s", code);
+        String code = (clockwise ^ invert) ? "S " : "I ";
+        System.out.printf("  %1s  %6s", code, invert ? "invert" : "");
 //code = "S ";
 //if (!clockwise) {
 //    Collections.reverse(segments);
@@ -221,6 +221,8 @@ public class ZanderWriter {
     }
     
     private String airspaceCode(AirspaceType type) {
+        if (type == null)
+            return "";
         switch (type) {
             case RESTRICTED:
             case DANGER:
@@ -232,19 +234,13 @@ public class ZanderWriter {
             case CLASS_E:
             case CLASS_F:
                 return type.getCode();
-            case CLASS_G:
-            case CTR:
-            case GLIDER_PROHIBITED:
-            case GLIDER_SECTOR:
-            case RMZ:
-            case TMZ:
-            case WAVE:
+            //$CASES-OMITTED$
             default: 
                 return "";
         }
     }
     
-    private String normAltitude(Altitude altitude, boolean upper) {
+    private String normAltitude(Altitude altitude, boolean upper) throws IOException {
         if (altitude == null)
             return upper ? "99999 MSL" : "00000 GND";
         
