@@ -163,9 +163,9 @@ public class ArcA implements Segment {
         
         if (last != null) {
             Point s = center.polar(r, start);
-//            gg.draw(new Line2D.Double(last.getLongitude(), last.getLatitude(), s.getLongitude(), s.getLatitude()));
+            gg.draw(new Line2D.Double(last.getLongitude(), last.getLatitude(), s.getLongitude(), s.getLatitude()));
         }
-//        gg.draw(new Arc2D.Double(center.getLongitude()-r, center.getLatitude()-r, 2*r, 2*r, start-90, end-start, Arc2D.OPEN));
+        gg.draw(new Arc2D.Double(center.getLongitude()-r, center.getLatitude()-r, 2*r, 2*r, start-90, end-start, Arc2D.OPEN));
         
         return center.polar(r, toRadians(endAngle));
     }

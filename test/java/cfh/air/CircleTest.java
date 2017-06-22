@@ -30,7 +30,7 @@ public class CircleTest {
     @DataPoints("dir")
     public static boolean[] directions = { false, true };
 
-    private static final double ERR = 1E-6;
+    private static final double ERR = 1E-5;
 
     
     @Theory
@@ -39,7 +39,7 @@ public class CircleTest {
             @FromDataPoints("lat") double latitude,
             @FromDataPoints("lon") double longitude,
             @FromDataPoints("dir") boolean clockwise
-            ) {
+    ) {
         assumeThat(latitude, both(greaterThanOrEqualTo(-85.0)).and(lessThanOrEqualTo(85.0)));
         assumeThat(longitude, both(greaterThan(-180.0)).and(lessThanOrEqualTo(180.0)));
         Point center = new Point(latitude, longitude);
@@ -54,7 +54,7 @@ public class CircleTest {
     public void testGetPoints_zero(
             @FromDataPoints("lat") double latitude,
             @FromDataPoints("lon") double longitude
-            ) {
+    ) {
         assumeThat(latitude, both(greaterThanOrEqualTo(-85.0)).and(lessThanOrEqualTo(85.0)));
         assumeThat(longitude, both(greaterThan(-180.0)).and(lessThanOrEqualTo(180.0)));
         Point center = new Point(latitude, longitude);
@@ -77,8 +77,17 @@ public class CircleTest {
         assertThat("first point", test.get(0), equalTo(start));
         assertThat("last point", test.get(count-1), equalTo(start));
         
-        for (Point point : test) {
+        double last = -1;
+        for (int i = 0; i < test.size(); i++) {
+            Point point = test.get(i);
             assertThat("distance " + point, center.distTo(point), closeTo(radius, ERR));
+            double angle = center.angleTo(point);
+            if (i == 0 || i == test.size()-1) {
+                assertThat("angle " + point, angle, closeTo(0, ERR));
+            } else {
+                assertThat("angle " + point, angle, greaterThan(last));
+            }
+            last = angle;
         }
     }
     
@@ -97,7 +106,7 @@ public class CircleTest {
             @FromDataPoints("lat") double latitude,
             @FromDataPoints("lon") double longitude,
             @FromDataPoints("dir") boolean clockwise
-            ) {
+    ) {
         assumeThat(latitude, both(greaterThanOrEqualTo(-85.0)).and(lessThanOrEqualTo(85.0)));
         assumeThat(longitude, both(greaterThan(-180.0)).and(lessThanOrEqualTo(180.0)));
         Point center = new Point(latitude, longitude);
