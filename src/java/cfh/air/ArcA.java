@@ -8,6 +8,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ArcA implements Segment {
@@ -69,31 +70,31 @@ public class ArcA implements Segment {
     public List<Point> getPoints(int step) {
         if (step < 0) throw new IllegalArgumentException("invalid step: " + step);
         
-        double start = toRadians(startAngle);
-        double end = toRadians(endAngle);
+        double start = startAngle;
+        double end = endAngle;
         double r = radius / MILES_PER_DEGREE;
         
         if (clockwise) {
-            if (end <= start) {
-                end += 2 * PI;
+            while (end <= start) {
+                end += 360;
             }
         } else {
-            if (start <= end) {
-                start += 2 * PI;
+            while (start <= end) {
+                start += 360;
             }
         }
 
         double delta = end - start;
         int n = (step == 0) ? 1 : (int) abs(ceil(delta / step));
-        double angleStep = delta / n;
+        double angleStep = toRadians(delta / n);
         
         List<Point> points = new ArrayList<Point>();
-        double angle = start;
+        double angle = toRadians(start);
         for (int i = 0; i < n; i++) {
             points.add(center.polar(r, angle)); 
             angle += angleStep;
         }
-        points.add(center.polar(r, end)); 
+        points.add(center.polar(r, toRadians(end))); 
         
         return points;
     }

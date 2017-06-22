@@ -2,7 +2,7 @@ package cfh.air;
 
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
-import static java.lang.Math.toRadians;
+import static java.lang.Math.*;
 import static org.hamcrest.Matchers.*;
 
 import java.util.List;
@@ -106,26 +106,33 @@ public class ArcATest {
         assertThat(end.getLongitude(), closeTo(endLon, ERR));
     }
     
-    @Test
-    public void testGetPoints_positive() {
+    @Theory
+    public void testGetPoints_positive(
+            @FromDataPoints("dir") boolean clockwise
+    ) {
         double radius = 10;  // degrees
         Point center = new Point(0, 0);
-        ArcA arc = new ArcA(radius, N, E, center, )
+        double startAngle = E;
+        double endAngle = S;
+        ArcA arc = new ArcA(radius*Segment.MILES_PER_DEGREE, startAngle, endAngle, center, clockwise);
+        Point start = center.polar(radius, toRadians(startAngle));
+        Point end = center.polar(radius, toRadians(endAngle));
+        int count = 10;
         
-        List<Point> test = circle.getPoints(360 / (count-1));
+        List<Point> test = arc.getPoints((clockwise ? 90 : 270) / (count-1));
         assertThat("result size", test, hasSize(count));
         assertThat("first point", test.get(0), equalTo(start));
-        assertThat("last point", test.get(count-1), equalTo(start));
+        assertThat("last point", test.get(count-1), equalTo(end));
         
         double last = -1;
         for (int i = 0; i < test.size(); i++) {
             Point point = test.get(i);
             assertThat("distance " + point, center.distTo(point), closeTo(radius, ERR));
             double angle = center.angleTo(point);
-            if (i == 0 || i == test.size()-1) {
-                assertThat("angle " + point, angle, closeTo(0, ERR));
-            } else {
-                assertThat("angle " + point, angle, greaterThan(last));
+            if (i == 0) {
+                assertThat("angle " + point, angle, closeTo(toRadians(startAngle), ERR));
+            } else if (i == test.size()-1) {
+                assertThat("angle " + point, angle, closeTo(toRadians(endAngle), ERR));
             }
             last = angle;
         }
