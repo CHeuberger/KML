@@ -55,11 +55,11 @@ public class Coord {
         }
     }
     
-    public Coord relative(double lat, double lng, double alt) {
+    public Coord relative(double lat, double lon, double alt) {
         if (isUnused(altitude))
-            return new Coord(latitude+lat, longitude+lng, alt);
+            return new Coord(latitude+lat, longitude+lon, alt);
         else
-            return new Coord(latitude+lat, longitude+lng, altitude+alt);
+            return new Coord(latitude+lat, longitude+lon, altitude+alt);
     }
 
     public String toKmlString() {
@@ -69,10 +69,10 @@ public class Coord {
             return String.format(Locale.US, "%.6f,%.6f,%.6f", this.longitude, this.latitude, this.altitude);
     }
 
-    private void checkAndSetLongitude(double lng) {
-        if (lng < -180 || lng > 180 || Double.isNaN(lng))
-            throw new IllegalArgumentException("longitude: " + lng);
-        this.longitude = lng;
+    private void checkAndSetLongitude(double lon) {
+        if (lon < -180 || lon > 180 || Double.isNaN(lon))
+            throw new IllegalArgumentException("longitude: " + lon);
+        this.longitude = lon;
     }
 
     private void checkAndSetLatitude(double lat) {

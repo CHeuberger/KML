@@ -53,7 +53,8 @@ public class ArcB implements Segment {
     
     @Override
     public List<Point> getPoints(int step) {
-        assert step >= 0 : step;
+        if (step < 0) throw new IllegalArgumentException("invalid step: " + step);
+        
         if (step == 0) 
             return Arrays.asList(start, end);
         

@@ -299,25 +299,25 @@ public class AirspaceConverter {
             return points;
         
         double lat = 0;
-        double lng = 0;
+        double lon = 0;
         for (int i = 0; i < size; i++) {
             lat += points.get(i).getLatitude();
-            lng += points.get(i).getLongitude();
+            lon += points.get(i).getLongitude();
         }
         lat /= size;
-        lng /= size;
-        Point center = new Point(lat, lng);
+        lon /= size;
+        Point center = new Point(lat, lon);
 
         double total;
         total = calcAngle(points, center);
         if (-0.2 < total && total < 0.2) {
             Point p = points.get(0);
             lat = center.getLatitude() - p.getLatitude();
-            lng = center.getLongitude() - p.getLongitude();
-            double r = sqrt(lat*lat + lng*lng);
+            lon = center.getLongitude() - p.getLongitude();
+            double r = sqrt(lat*lat + lon*lon);
             lat /= r;
-            lng /= r;
-            center = new Point(p.getLatitude()-0.005*lat, p.getLongitude()-0.005*lng);
+            lon /= r;
+            center = new Point(p.getLatitude()-0.005*lat, p.getLongitude()-0.005*lon);
             total = calcAngle(points, center);
         }
         

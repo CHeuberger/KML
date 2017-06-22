@@ -67,7 +67,8 @@ public class ArcA implements Segment {
     
     @Override
     public List<Point> getPoints(int step) {
-        assert step >= 0 : step;
+        if (step < 0) throw new IllegalArgumentException("invalid step: " + step);
+        
         double start = toRadians(startAngle);
         double end = toRadians(endAngle);
         double r = radius / MILES_PER_DEGREE;
