@@ -33,7 +33,7 @@ public class PointTest {
     public static double[] latitudes = { 0, 1, -1, 10, -10, -80, 80, 90, -90 };
 
     @DataPoints("lon")
-    public static double[] longitudes = { 0, 1, -1, 10, -10, 90, -90, 170, -170, 180, -180 };
+    public static double[] longitudes = { 0, 1, -1, 10, -10, 90, -90, 170, -170, 180 };
 
 
     @Theory

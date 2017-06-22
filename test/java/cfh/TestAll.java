@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import cfh.air.AltitudeTest;
 import cfh.air.ArcATest;
+import cfh.air.CircleTest;
 import cfh.air.PointTest;
 
 
@@ -13,6 +14,7 @@ import cfh.air.PointTest;
 @SuiteClasses({
     AltitudeTest.class,
     PointTest.class,
+    CircleTest.class,
     ArcATest.class,
 })
 

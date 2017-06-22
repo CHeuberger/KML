@@ -12,10 +12,16 @@ import java.util.List;
 
 public class Circle implements Segment {
 
-    private final double radius;  // nm
+    /** nautical mile. */
+    private final double radius;
     private final Point center;
     private final boolean clockwise;
     
+    /**
+     * @param radius nautical mile
+     * @param center
+     * @param clockwise
+     */
     public Circle(double radius, Point center, boolean clockwise) {
         if (radius < 0) throw new IllegalArgumentException(Double.toString(radius));
         if (center == null) throw new IllegalArgumentException("null");
@@ -31,6 +37,10 @@ public class Circle implements Segment {
     
     public double getRadius() {
         return radius;
+    }
+    
+    public boolean isClockwise() {
+        return clockwise;
     }
 
     @Override
