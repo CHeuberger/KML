@@ -13,7 +13,7 @@ import java.util.Locale;
 public class Point implements Segment {
 
     /** Error for comparing points. */
-    private static final double ERR = 1E-5;
+    private static final double ERR = 1E-6;
     
     /** degrees */
     private final double latitude;
@@ -25,8 +25,28 @@ public class Point implements Segment {
      * @param longitude degrees
      */
     public Point(double latitude, double longitude) {
-        if (latitude < -90 || latitude > 90) throw new IllegalArgumentException("invalid latitude: " + latitude);
-        if (longitude < -180 || longitude > 180) throw new IllegalArgumentException("invalid longitude: " + longitude);
+//        while (latitude < -270) latitude += 360;
+//        while (latitude > 270) latitude -= 360;
+//        if (latitude < -90) {
+//            latitude = -180 - latitude;
+//            longitude += 180;
+//        } else if (latitude > 90) {
+//            latitude -= 180;
+//            longitude += 180;
+//        }
+//        while (longitude < -180) longitude += 360;
+//        while (longitude > 180) longitude -= 360;
+        
+        if (latitude < -90-ERR || latitude > 90+ERR) throw new IllegalArgumentException("latitude: " + latitude);
+        
+        if (latitude < -90) latitude = -90;
+        if (latitude > 90 ) latitude =  90;
+        while (longitude <= -180) longitude += 360;
+        while (longitude > 180) longitude -= 360;
+
+        assert -90 <= latitude && latitude <= 90 : "latitude " + latitude;
+        assert -180 < longitude && longitude <= 180 : "longitude " + longitude;
+        
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -61,9 +81,14 @@ public class Point implements Segment {
      * @return <i>distance</i> between the two points in degrees
      */
     public double distTo(Point point) {
-        return toDegrees(acos(sin(toRadians(latitude))*sin(toRadians(point.latitude))+
-                cos(toRadians(latitude))*cos(toRadians(point.latitude))
-                        *cos(toRadians(longitude)-toRadians(point.longitude))));
+//        return toDegrees(acos(sin(toRadians(latitude))*sin(toRadians(point.latitude))+
+//                cos(toRadians(latitude))*cos(toRadians(point.latitude))
+//                        *cos(toRadians(longitude)-toRadians(point.longitude))));
+        double dx = cos(toRadians(this.latitude)) * (point.longitude - this.longitude);
+        double dy = point.latitude - this.latitude;
+        while (dx < -180) dx += 360;
+        while (dx > 180) dx -= 360;
+        return sqrt(dx*dx + dy*dy);
     }
     
     /**
@@ -102,7 +127,10 @@ public class Point implements Segment {
         if (obj == null || obj.getClass() != this.getClass()) return false;
         
         Point other = (Point) obj;
-        return abs(other.latitude-this.latitude) < ERR && abs(other.longitude-this.longitude) < ERR;
+        double lon = other.longitude-this.longitude;
+        while (lon < -180) lon += 360;
+        while (lon > 180) lon -= 360;
+        return abs(other.latitude-this.latitude) < ERR && abs(lon) < ERR;
     }
 
     @Override

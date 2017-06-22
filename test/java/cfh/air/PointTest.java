@@ -42,7 +42,7 @@ public class PointTest {
             @FromDataPoints("lon") double longitude
     ) {
         assumeThat(latitude, both(greaterThanOrEqualTo(-90.0)).and(lessThanOrEqualTo(90.0)));
-        assumeThat(longitude, both(greaterThanOrEqualTo(-180.0)).and(lessThanOrEqualTo(180.0)));
+        assumeThat(longitude, both(greaterThan(-180.0)).and(lessThanOrEqualTo(180.0)));
         Point test = new Point(latitude, longitude);
 
         assertThat("latitude", test.getLatitude(), closeTo(latitude, ERR));
@@ -130,6 +130,27 @@ public class PointTest {
         test = zero.polar(dist, W);
         assertThat("W", test, equalTo(west));
     }
+    
+    @Theory
+    public void testPolar_reciprocal(
+            @FromDataPoints("lat") double latitude1,
+            @FromDataPoints("lon") double longitude1,
+            @FromDataPoints("lat") double latitude2,
+            @FromDataPoints("lon") double longitude2
+    ) {
+        assumeThat(latitude1, both(greaterThanOrEqualTo(-90.0)).and(lessThanOrEqualTo(90.0)));
+        assumeThat(longitude1, both(greaterThan(-180.0)).and(lessThanOrEqualTo(180.0)));
+        assumeThat(latitude2, both(greaterThanOrEqualTo(-90.0)).and(lessThanOrEqualTo(90.0)));
+        assumeThat(longitude2, both(greaterThan(-180.0)).and(lessThanOrEqualTo(180.0)));
+        Point center = new Point(latitude1, longitude1);
+        Point point = new Point(latitude2, longitude2);
+        
+        double dist = center.distTo(point);
+        assumeThat(dist, lessThan(10.0));
+        double angle = center.angleTo(point);
+        Point test = center.polar(dist, angle);
+        assertThat(center + "->" + point + " == " + dist + "<" + (int) toDegrees(angle) + "°", test, equalTo(point));
+    }
 
     @Theory
     public void testGetPoints(
@@ -137,7 +158,7 @@ public class PointTest {
             @FromDataPoints("lon") double longitude
     ) {
         assumeThat(latitude, both(greaterThanOrEqualTo(-90.0)).and(lessThanOrEqualTo(90.0)));
-        assumeThat(longitude, both(greaterThanOrEqualTo(-180.0)).and(lessThanOrEqualTo(180.0)));
+        assumeThat(longitude, both(greaterThan(-180.0)).and(lessThanOrEqualTo(180.0)));
         Point point = new Point(latitude, longitude);
         List<Point> expected = Collections.singletonList(point);
         List<Point> test;
@@ -148,6 +169,12 @@ public class PointTest {
         test = point.getPoints(10);
         assertThat("step of 10", test, equalTo(expected));
     }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetPoints_negative() {
+        Point point = new Point(0, 0);
+        point.getPoints(-1);
+    }
 
     @Theory
     public void testGetBound(
@@ -155,7 +182,7 @@ public class PointTest {
             @FromDataPoints("lon") double longitude
     ) {
         assumeThat(latitude, both(greaterThanOrEqualTo(-90.0)).and(lessThanOrEqualTo(90.0)));
-        assumeThat(longitude, both(greaterThanOrEqualTo(-180.0)).and(lessThanOrEqualTo(180.0)));
+        assumeThat(longitude, both(greaterThan(-180.0)).and(lessThanOrEqualTo(180.0)));
         Point point = new Point(latitude, longitude);
         Rectangle2D test;
         
@@ -169,7 +196,7 @@ public class PointTest {
             @FromDataPoints("lon") double longitude
     ) {
         assumeThat(latitude, both(greaterThanOrEqualTo(-90.0)).and(lessThanOrEqualTo(90.0)));
-        assumeThat(longitude, both(greaterThanOrEqualTo(-180.0)).and(lessThanOrEqualTo(180.0)));
+        assumeThat(longitude, both(greaterThan(-180.0)).and(lessThanOrEqualTo(180.0)));
         Point point = new Point(latitude, longitude);
         
         assertThat("same instance", point.equals(point), is(true));
@@ -188,7 +215,7 @@ public class PointTest {
             @FromDataPoints("lon") double longitude
     ) {
         assumeThat(latitude, both(greaterThanOrEqualTo(-90.0)).and(lessThanOrEqualTo(90.0)));
-        assumeThat(longitude, both(greaterThanOrEqualTo(-180.0)).and(lessThanOrEqualTo(180.0)));
+        assumeThat(longitude, both(greaterThan(-180.0)).and(lessThanOrEqualTo(180.0)));
         Point point = new Point(latitude, longitude);
         int hash = point.hashCode();
         
@@ -205,7 +232,7 @@ public class PointTest {
             @FromDataPoints("lon") double longitude
     ) {
         assumeThat(latitude, both(greaterThanOrEqualTo(-90.0)).and(lessThanOrEqualTo(90.0)));
-        assumeThat(longitude, both(greaterThanOrEqualTo(-180.0)).and(lessThanOrEqualTo(180.0)));
+        assumeThat(longitude, both(greaterThan(-180.0)).and(lessThanOrEqualTo(180.0)));
         String test = new Point(latitude, longitude).toString();
         String lat = String.format(Locale.ROOT, "%.4f", latitude);
         String lon = String.format(Locale.ROOT, "%.4f", longitude);
