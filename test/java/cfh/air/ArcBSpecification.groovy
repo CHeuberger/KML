@@ -2,19 +2,19 @@ package cfh.air
 
 import static java.lang.Math.*
 import static org.hamcrest.Matchers.*
+import static spock.util.matcher.HamcrestMatchers.closeTo
 import static org.junit.Assert.assertThat
 
 import java.util.List
 
-import spock.lang.Specification
-import spock.lang.Unroll
+import spock.lang.*
 
 
 class ArcBSpecification extends Specification {
     
     static final double ERR = 1e-5
 
-    def "constructor"() {
+    def "ArcB"() {
         given: "some parameters"
         def center = new Point(cx, cy)
         def start = new Point(sx, sy)
@@ -39,7 +39,7 @@ class ArcBSpecification extends Specification {
     }
     
     
-    def "get points with zero step"() {
+    def "getPoints(0)"() {
         given: "an arc with parameters"
         def center = new Point(cx, cy)
         def start = new Point(sx, sy)
@@ -62,14 +62,15 @@ class ArcBSpecification extends Specification {
     }
     
     
-    @Unroll
-    def "get some points"() {
+    def "getPoints(>0)"() {
         given: "an arc with parameters"
         def center = new Point(cx, cy)
         def start = new Point(sx, sy)
         def end = new Point(ex, ey)
         def clockwise = dir
         def arc = new ArcB(start, end, center, clockwise)
+        def minR = min(center.distTo(start), center.distTo(end)) - ERR
+        def maxR = max(center.distTo(start), center.distTo(end)) + ERR
 
         when: "list of points with #step degree step is retriedved"
         def points = arc.getPoints(step)
@@ -78,7 +79,11 @@ class ArcBSpecification extends Specification {
         points.size() == count
         points.get(0) equals start
         points.get(points.size()-1) equals end
-        ordered(points, center, dir, step)
+        ordered(points, center, dir ? step : -step)
+        points.each {
+            def r = center.distTo(it)
+            assert minR < r & r < maxR
+        }
 
         where:
         cx | cy || sx | sy || ex | ey || dir   || step | count
@@ -88,8 +93,8 @@ class ArcBSpecification extends Specification {
          0 |  0 ||  5 |  0 ||  0 |  5 || false ||  10  | 9+1
     }
     
-    boolean ordered(List<Point> points, Point center, boolean clockwise, int step) {
-        double radStep = toRadians(clockwise ? step : -step)
+    boolean ordered(List<Point> points, Point center, int step) {
+        double radStep = toRadians(step)
         double prev = center.angleTo(points.get(0))
         for (int i = 1; i < points.size(); i++) {
             double angle = center.angleTo(points.get(i))
