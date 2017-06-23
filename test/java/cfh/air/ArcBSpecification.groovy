@@ -11,6 +11,8 @@ import spock.lang.Unroll
 
 
 class ArcBSpecification extends Specification {
+    
+    static final double ERR = 1e-5
 
     def "constructor"() {
         given: "some parameters"
@@ -86,7 +88,7 @@ class ArcBSpecification extends Specification {
          0 |  0 ||  5 |  0 ||  0 |  5 || false ||  10  | 9+1
     }
     
-    void ordered(List<Point> points, Point center, boolean clockwise, int step) {
+    boolean ordered(List<Point> points, Point center, boolean clockwise, int step) {
         double radStep = toRadians(clockwise ? step : -step)
         double prev = center.angleTo(points.get(0))
         for (int i = 1; i < points.size(); i++) {
@@ -95,8 +97,9 @@ class ArcBSpecification extends Specification {
             if (signum(delta) != signum(radStep)) {
                 delta += signum(radStep) * 2 * PI;
             }
-            assert abs(delta-radStep) < 0.001
+            if (abs(delta-radStep) > ERR) return false;
             prev = angle
         }
+        return true;
     }
 }
