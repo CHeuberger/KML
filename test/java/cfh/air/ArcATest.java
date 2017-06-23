@@ -124,7 +124,6 @@ public class ArcATest {
         assertThat("first point", test.get(0), equalTo(start));
         assertThat("last point", test.get(count-1), equalTo(end));
         
-        double last = -1;
         for (int i = 0; i < test.size(); i++) {
             Point point = test.get(i);
             assertThat("distance " + point, center.distTo(point), closeTo(radius, ERR));
@@ -134,7 +133,6 @@ public class ArcATest {
             } else if (i == test.size()-1) {
                 assertThat("angle " + point, angle, closeTo(toRadians(endAngle), ERR));
             }
-            last = angle;
         }
     }
  
