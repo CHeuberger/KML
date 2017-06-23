@@ -62,7 +62,7 @@ public class Point implements Segment {
     /**
      * Initial bearing to another point.
      * @param point destination point
-     * @return angle from this point to the given point in radians, 0 is north, PI/2 is east
+     * @return radians angle from this point to the given point, 0 is north, PI/2 is east
      */
     public double angleTo(Point point) {
         double dx = cos(toRadians(this.latitude)) * (point.longitude - this.longitude);
@@ -78,7 +78,7 @@ public class Point implements Segment {
     
     /**
      * @param point 
-     * @return <i>distance</i> between the two points in degrees
+     * @return degrees <i>distance</i> between the two points
      */
     public double distTo(Point point) {
 //        return toDegrees(acos(sin(toRadians(latitude))*sin(toRadians(point.latitude))+

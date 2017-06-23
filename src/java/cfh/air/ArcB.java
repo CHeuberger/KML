@@ -60,28 +60,28 @@ public class ArcB implements Segment {
         
         double startRadius = center.distTo(start);
         double endRadius = center.distTo(end);
-        double starAngle = center.angleTo(start);
+        double startAngle = center.angleTo(start);
         double endAngle = center.angleTo(end);
         
         if (clockwise) {
-            if (endAngle < starAngle) {
+            while (endAngle < startAngle) {
                 endAngle += 2 * PI;
             }
         } else {
-            if (starAngle < endAngle) {
-                starAngle += 2 * PI;
+            while (startAngle < endAngle) {
+                startAngle += 2 * PI;
             }
         }
 
-        double delta = endAngle - starAngle;
+        double delta = endAngle - startAngle;
         int n = (int) abs(ceil(delta / toRadians(step)));
         double angleStep = delta / n;
         double radiusStep = (endRadius - startRadius) / n;
         
         List<Point> points = new ArrayList<Point>();
-        points.add(start);
-        double angle = starAngle;
+        double angle = startAngle;
         double radius = startRadius;
+        points.add(start);
         for (int i = 1; i < n; i++) {
             angle += angleStep;  // starting with i = 1
             radius += radiusStep;
