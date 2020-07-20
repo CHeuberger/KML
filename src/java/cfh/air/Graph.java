@@ -123,6 +123,9 @@ public class Graph {
 
                 List<Airspace> airspaces = new OpenAirReader().readAirspaces(reader);
                 System.out.printf("%d airspaces read from %s\n", airspaces.size(), file);
+                for (Airspace airspace : airspaces) {
+                    System.out.println(airspace);
+                }
                 graph.setAirspaces(airspaces);
             } finally {
                 reader.close();

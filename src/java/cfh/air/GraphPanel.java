@@ -54,6 +54,10 @@ public class GraphPanel extends JPanel {
             }
             Graphics2D gg = (Graphics2D) g.create();
             try {
+                if (boundingBox == null) {
+                    gg.drawString("empty ?", 40, 40);
+                    return;
+                }
                 double scaleX = (getWidth()-2*GAP) / boundingBox.getWidth();
                 double scaleY = (getHeight()-2*GAP) / boundingBox.getHeight();
                 double scale = Math.min(scaleX, scaleY);

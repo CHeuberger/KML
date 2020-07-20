@@ -8,7 +8,6 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ArcA implements Segment {
@@ -113,14 +112,14 @@ public class ArcA implements Segment {
             for (Point point : points) {
                 double lon = point.getLongitude();
                 if (lon < x) {
-                    w += lon - x;
+                    w -= lon - x;
                     x = lon;
                 } else if (lon > x + w) {
                     w = lon - x;
                 }
                 double lat = point.getLatitude();
                 if (lat < y) {
-                    h += lat - y;
+                    h -= lat - y;
                     y = lat;
                 } else if (lat > y + h) {
                     h = lat - y;

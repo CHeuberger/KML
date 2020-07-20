@@ -13,6 +13,87 @@ import java.util.regex.Pattern;
 
 public class OpenAirReader {
 
+    /*
+     * OpenAir:
+     *     comment*
+     *     airspace*
+     * 
+     * comment:
+     *     '*' text
+     *     
+     * airspace:
+     *     AC type text?    // airspace class, comment
+     *     AN text          // name
+     *     data*         
+     *     |
+     *     AC type text?    // airspace class, comment
+     *     data*         
+     *     |
+     *     AN text          // name
+     *     data*         
+     * 
+     * data:
+     *     AL altitude               |  // floor
+     *     AH altitude               |  // ceiling
+     *     AT test                   |  // ignored (TODO)
+     *     V D = dir                 |  // direcition for DA and DB
+     *     V X = coord               |  // coordinate for DA, DB and DC
+     *     SB color                  |  // brush color
+     *     SP style, num, color      |  // pen style, width, color
+     *     DA double, double, double |  // arc radius [nm], start and end angle [degrees]
+     *     DB coord, coord           |  // arc start, end
+     *     DC double                 |  // circle radius [nm]
+     *     DP coord                     // point
+     * 
+     * type:
+     *     R    |  // restricted
+     *     Q    |  // danger
+     *     P    |  // prohibited
+     *     A    |  // class A
+     *     B    |  // class B
+     *     C    |  // class C
+     *     D    |  // class D
+     *     E    |  // class E
+     *     F    |  // class F
+     *     G    |  // class G
+     *     GP   |  // glider prohibited
+     *     GSEC |  // glider sector
+     *     CTR  |  // ctr
+     *     W    |  // wave
+     *     TMZ  |  // tmz
+     *     RMZ  |  // rmz
+     * 
+     * altitude:
+     *     FL num         |
+     *     [num] unit ref
+     * 
+     * unit:
+     *     [ft] |
+     *     m    |
+     *     km
+     * 
+     * ref:
+     *     AGL   | GND | SFC |  // above ground
+     *     [MSL]                // mean sea level
+     * 
+     * dir:
+     *   - |  // clockwise
+     *   +    // counterclockwise
+     * 
+     * coord:
+     *     num[:num[:num]] {'N'|'S'} num[:num[:num]] {'E'|'W'} |
+     *     num[:num[:num]] {'E'|'W'} num[:num[:num]] {'N'|'S'}
+     * 
+     * style:
+     *     0 |  // solid
+     *     1 |  // dash
+     *     5 |  // no border
+     * 
+     * color:
+     *     red, green, blue[, alpha] |
+     *     -1, -1, -1[, num]            // transparent
+     * 
+     */
     public List<Airspace> readAirspaces(PushbackLineReader reader) throws IOException {
         List<Airspace> airspaces = new ArrayList<Airspace>();
         Airspace airspace;
@@ -178,7 +259,7 @@ public class OpenAirReader {
             type = FL;
             factor *= 100;
         } else {
-            matcher = Pattern.compile("(\\d*+(?:\\.\\d*+)?+) *+(m|km|ft|) *+(AGL|GND|MSL|) *+").matcher(text);
+            matcher = Pattern.compile("(\\d*+(?:\\.\\d*+)?+) *+(m|km|ft|) *+(AGL|GND|SFC|MSL|) *+").matcher(text);
             if (matcher.matches()) {
                 text = matcher.group(1);
                 

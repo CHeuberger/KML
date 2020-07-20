@@ -5,7 +5,7 @@ public class Altitude {
     public enum Type {
         /** Altitude relative to ground. */         GND,
         /** Altitude relative to Mean Sea Level. */ MSL,
-        /** Flight level (feet/100, QNE). */        FL;
+        /** Flight level (100feet, QNE). */         FL;
     }
     
     private final Type type;

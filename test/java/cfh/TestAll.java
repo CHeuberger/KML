@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import cfh.air.AltitudeTest;
 import cfh.air.ArcATest;
-import cfh.air.ArcBSpecification;
+//import cfh.air.ArcBSpecification;
 import cfh.air.CircleTest;
 import cfh.air.PointTest;
 
@@ -18,7 +18,7 @@ import cfh.air.PointTest;
     CircleTest.class,
     ArcATest.class,
     
-    ArcBSpecification.class,
+//    ArcBSpecification.class,
 })
 
 public class TestAll {

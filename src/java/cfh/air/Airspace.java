@@ -112,6 +112,11 @@ public class Airspace {
         builder.append(type).append(",");
         builder.append(floor).append(",");
         builder.append(ceiling).append("]");
+        if (comment != null) {
+            int i = comment.indexOf('\n');
+            if (i == -1) i = Math.max(10, comment.length());
+            builder.append(comment.substring(0, i));
+        }
         return builder.toString();
     }
 }
