@@ -27,6 +27,9 @@ public abstract class Feature extends KmlObject {
     @XmlElementRef
     private StyleSelector styleSelector;
     
+    @XmlElement
+    private String snippet;
+    
     protected Feature() {
     }
 
@@ -84,6 +87,15 @@ public abstract class Feature extends KmlObject {
     public Feature setStyleSelector(StyleSelector styleSelector) {
         if (styleSelector == null) throw new IllegalArgumentException("null");
         this.styleSelector = styleSelector;
+        return this;
+    }
+    
+    public String getSnippet() {
+        return snippet;
+    }
+    
+    public Feature setSnippet(String snippet) {
+        this.snippet = snippet;
         return this;
     }
 }
