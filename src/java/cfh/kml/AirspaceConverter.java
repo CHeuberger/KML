@@ -109,15 +109,19 @@ public class AirspaceConverter {
                 folder.add(placemark);
                 
                 if (floor != null) {
-                    geometry = createSide(points, floor, ceiling); 
-                    placemark = new Placemark(airspace.getName() + "-Side", geometry);
-                    placemark.setDescription(description);
-                    if (style != null) {
-                        placemark.setStyleSelector(style);
-                    } else if (styleUrl != null) {
-                        placemark.setStyleUrl(styleUrl);
+                    geometry = createSide(points, floor, ceiling);
+                    if (geometry == null) {
+                        System.err.println("unable to create side: " + airspace);
+                    } else {
+                        placemark = new Placemark(airspace.getName() + "-Side", geometry);
+                        placemark.setDescription(description);
+                        if (style != null) {
+                            placemark.setStyleSelector(style);
+                        } else if (styleUrl != null) {
+                            placemark.setStyleUrl(styleUrl);
+                        }
+                        folder.add(placemark);
                     }
-                    folder.add(placemark);
                 }
             }
             
@@ -229,8 +233,12 @@ public class AirspaceConverter {
         if (floor.getValue() == 0) {
             mode = (ceiling.getType() == GND) ? RELATIVE : ABSOLUTE;
         } else if (floor.getType() == GND) {
+            if (ceiling.getType() != GND)
+                return null; // TODO display something
             mode = RELATIVE;
         } else {
+            if (ceiling.getType() == GND)
+                return null; // TODO display something
             mode = ABSOLUTE;
         }
         Coord coord;
