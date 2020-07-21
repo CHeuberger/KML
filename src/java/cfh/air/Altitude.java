@@ -5,7 +5,8 @@ public class Altitude {
     public enum Type {
         /** Altitude relative to ground. */         GND,
         /** Altitude relative to Mean Sea Level. */ MSL,
-        /** Flight level (100feet, QNE). */         FL;
+        /** Flight level (100feet, QNE). */         FL,
+        /** Unlimited, only for ceiling. */         UNLIM;
     }
     
     private final Type type;
@@ -42,6 +43,8 @@ public class Altitude {
             case GND:
             case MSL:
                 return getValueFeet() + type.toString() + " (" + (int)(value) + "m)";
+            case UNLIM:
+                return type.toString();
             default:
                 return toString();
         }

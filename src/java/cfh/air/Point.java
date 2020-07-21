@@ -69,7 +69,7 @@ public class Point implements Segment {
         double dy = point.latitude - this.latitude;
         while (dx < -180) dx += 360;
         while (dx > 180) dx -= 360;
-        double angle = atan2(-dx, dy);
+        double angle = atan2(dx, dy);
         if (angle < 0) {
             angle += 2 * PI;
         }
@@ -98,7 +98,7 @@ public class Point implements Segment {
      */
     public Point polar(double dist, double angle) {
         return new Point(latitude + dist*cos(angle), 
-                longitude - dist*sin(angle)/cos(toRadians(latitude)));
+                longitude + dist*sin(angle)/cos(toRadians(latitude)));
     }
     
     @Override

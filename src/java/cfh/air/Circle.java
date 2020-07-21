@@ -24,7 +24,7 @@ public class Circle implements Segment {
      */
     public Circle(double radius, Point center, boolean clockwise) {
         if (radius < 0) throw new IllegalArgumentException(Double.toString(radius));
-        if (center == null) throw new IllegalArgumentException("null");
+        if (center == null) throw new IllegalArgumentException("center undefined");
         
         this.radius = radius;
         this.center = center;

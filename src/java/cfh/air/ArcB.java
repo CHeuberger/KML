@@ -21,9 +21,9 @@ public class ArcB implements Segment {
     private final boolean clockwise;
     
     public ArcB(Point start, Point end, Point center, boolean clockwise) {
-        if (start == null) throw new IllegalArgumentException("null");
-        if (end == null) throw new IllegalArgumentException("null");
-        if (center == null) throw new IllegalArgumentException("null");
+        if (start == null) throw new IllegalArgumentException("start undefined");
+        if (end == null) throw new IllegalArgumentException("end undefined");
+        if (center == null) throw new IllegalArgumentException("center undefined");
         
         this.start = start;
         this.end = end;
@@ -44,7 +44,7 @@ public class ArcB implements Segment {
     }
     
     public double getRadius() {
-        return 60.0 * center.distTo(start);
+        return MILES_PER_DEGREE * center.distTo(start);
     }
     
     public boolean isClockwise() {

@@ -25,18 +25,12 @@ public class OpenAirReader {
      *     AC type text?    // airspace class, comment
      *     AN text          // name
      *     data*         
-     *     |
-     *     AC type text?    // airspace class, comment
-     *     data*         
-     *     |
-     *     AN text          // name
-     *     data*         
      * 
      * data:
      *     AL altitude               |  // floor
      *     AH altitude               |  // ceiling
-     *     AT test                   |  // ignored (TODO)
-     *     V D = dir                 |  // direcition for DA and DB
+     *     AT test                   |  // ignored (TODO doc)
+     *     V D = dir text?           |  // direcition for DA and DB
      *     V X = coord               |  // coordinate for DA, DB and DC
      *     SB color                  |  // brush color
      *     SP style, num, color      |  // pen style, width, color
@@ -64,8 +58,9 @@ public class OpenAirReader {
      *     RMZ  |  // rmz
      * 
      * altitude:
+     *     [num] unit ref |
      *     FL num         |
-     *     [num] unit ref
+     *     UNLIM
      * 
      * unit:
      *     [ft] |
@@ -77,8 +72,8 @@ public class OpenAirReader {
      *     [MSL]                // mean sea level
      * 
      * dir:
-     *   - |  // clockwise
-     *   +    // counterclockwise
+     *   + |  // clockwise
+     *   -    // counterclockwise
      * 
      * coord:
      *     num[:num[:num]] {'N'|'S'} num[:num[:num]] {'E'|'W'} |
@@ -94,6 +89,9 @@ public class OpenAirReader {
      *     -1, -1, -1[, num]            // transparent
      * 
      */
+    
+    private Point center = null;
+ 
     public List<Airspace> readAirspaces(PushbackLineReader reader) throws IOException {
         List<Airspace> airspaces = new ArrayList<Airspace>();
         Airspace airspace;
@@ -137,17 +135,15 @@ public class OpenAirReader {
 
     private Airspace parseAirspace(PushbackLineReader reader) throws IOException {
         Airspace airspace = null;
-        
-        Point center = null;
-        boolean clockwise = true;
-
         String line;
+        
+        boolean clockwise = true;
         
         while ((line = skipEmpty(reader)) != null) {
             String[] tokens = line.split(" +", 3);
             if (tokens[0].equalsIgnoreCase("AC")) {
                 airspace = new Airspace(reader.getLineNumber());
-                AirspaceType type = AirspaceType.getType(tokens[1]);
+                AirspaceType type = (tokens.length > 1) ? AirspaceType.getType(tokens[1]) : null;
                 if (type == null) {
                     System.err.println(reader.getLineNumber() + ":unrecognized \"AC\": " + line);
                 } else {
@@ -167,7 +163,7 @@ public class OpenAirReader {
             try {
                 String[] tokens = line.split(" +", 2);
                 String record = tokens[0];
-                String arg = tokens[1];
+                String arg = (tokens.length > 1) ? tokens[1] : "";
                 if (record.equalsIgnoreCase("AC")) {
                     reader.pushback(line);
                     break;
@@ -182,15 +178,15 @@ public class OpenAirReader {
                 } else if (record.equalsIgnoreCase("AH")) {
                     airspace.setCeiling(parseAltitude(arg));
                 } else if (record.equalsIgnoreCase("AT")) {
-                    // TODO
+                    // TODO implement
                 } else if (record.equalsIgnoreCase("V")) {
                     tokens = arg.split(" *= *", 2);
                     String variable = tokens[0];
                     String value = tokens[1];
                     if (variable.equalsIgnoreCase("D")) {
-                        if (value.equals("+")) {
+                        if (value.isEmpty() || value.startsWith("+")) {
                             clockwise = true;
-                        } else if (value.equals("-")) {
+                        } else if (value.startsWith("-")) {
                             clockwise = false;
                         } else {
                             System.err.println(reader.getLineNumber() + ":unrecognized direction: " + line);
@@ -250,26 +246,29 @@ public class OpenAirReader {
     }
     
     private Altitude parseAltitude(String text) throws ParseException {
+        Matcher matcher;
         Altitude.Type type;
         double factor = 0.3048;
-        Matcher matcher;
-        matcher = Pattern.compile("FL *+(\\d++).*+").matcher(text);
+        if (text.equalsIgnoreCase("UNLIM") || text.equalsIgnoreCase("UNLIMITED")) {
+            return new Altitude(UNLIM, 9999);
+        } 
+        matcher = Pattern.compile("FL *+(\\d++) *+").matcher(text);
         if (matcher.matches()) {
             text = matcher.group(1);
             type = FL;
             factor *= 100;
         } else {
-            matcher = Pattern.compile("(\\d*+(?:\\.\\d*+)?+) *+(m|km|ft|) *+(AGL|GND|SFC|MSL|) *+").matcher(text);
+            matcher = Pattern.compile("(?i)(\\d*+(?:\\.\\d*+)?+) *+(m|km|ft|) *+(AGL|GND|SFC|MSL|) *+").matcher(text);
             if (matcher.matches()) {
                 text = matcher.group(1);
                 
-                if (matcher.group(2).equals("m")) {
+                if (matcher.group(2).equalsIgnoreCase("m")) {
                     factor = 1;
-                } else if (matcher.group(2).equals("km")) {
-                    factor = 1000;
+                } else if (matcher.group(2).equalsIgnoreCase("km")) {
+                    factor = 1e3;
                 }
                 
-                if (matcher.group(3).equals("AGL") || matcher.group(3).equals("GND") || matcher.group(3).equals("SFC")) {
+                if (matcher.group(3).equalsIgnoreCase("AGL") || matcher.group(3).equalsIgnoreCase("GND") || matcher.group(3).equalsIgnoreCase("SFC")) {
                     type = GND;
                 } else {
                     type = MSL;

@@ -36,7 +36,7 @@ public class ArcA implements Segment {
         if (radius < 0) throw new IllegalArgumentException(Double.toString(radius));
         if (startAngle < 0 || startAngle > 360) throw new IllegalArgumentException(Double.toString(startAngle));
         if (endAngle < 0 || endAngle > 360) throw new IllegalArgumentException(Double.toString(endAngle));
-        if (center == null) throw new IllegalArgumentException("null");
+        if (center == null) throw new IllegalArgumentException("center undefined");
         
         this.radius = radius;
         this.startAngle = startAngle;

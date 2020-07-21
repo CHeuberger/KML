@@ -41,7 +41,7 @@ public class AirspaceConverter {
 
     /** step in degrees for curves */
     private static final int STEP = 10;
-    private static final String DESC_INDENT = "\n";
+    private static final String DESC_INDENT = "\n                ";
 
     public Document convertAirspaces(List<Airspace> airspaces, String name) {
         if (airspaces == null) throw new IllegalArgumentException("null");
@@ -109,7 +109,7 @@ public class AirspaceConverter {
                 folder.add(placemark);
                 
                 if (floor != null) {
-                    geometry = createSide(points, floor.getValue(), ceiling.getValue()); 
+                    geometry = createSide(points, floor, ceiling); 
                     placemark = new Placemark(airspace.getName() + "-Side", geometry);
                     placemark.setDescription(description);
                     if (style != null) {
@@ -121,15 +121,17 @@ public class AirspaceConverter {
                 }
             }
             
-            Geometry geometry = createPolygon(points, floor);
-            placemark = new Placemark(airspace.getName() + "-Bottom", geometry);
-            placemark.setDescription(description);
-            if (style != null) {
-                placemark.setStyleSelector(style);
-            } else if (styleUrl != null) {
-                placemark.setStyleUrl(styleUrl);
+            if (floor != null) {
+                Geometry geometry = createPolygon(points, floor);
+                placemark = new Placemark(airspace.getName() + "-Bottom", geometry);
+                placemark.setDescription(description);
+                if (style != null) {
+                    placemark.setStyleSelector(style);
+                } else if (styleUrl != null) {
+                    placemark.setStyleUrl(styleUrl);
+                }
+                folder.add(placemark);
             }
-            folder.add(placemark);
             
             if (floor != null && floor.getValue() > 0) {
                 placemark = new Placemark(airspace.getName() + "-Ground", createRing(points, null));
@@ -183,13 +185,19 @@ public class AirspaceConverter {
     private LinearRing createRing(List<Point> points, Altitude altitude) {
         assert points != null;
         
-        double alt = altitude != null ? altitude.getValue() : Coord.UNUSED;
         LinearRing ring = new LinearRing();
-        if (altitude == null || altitude.getValue() == 0) {
+        double alt;
+        if (altitude == null) {
+            alt = 0;
+        } else if (altitude.getValue() == 0) {
+            alt = 0;
+            ring.setAltitudeMode(CLAMP).setTessellate(true);
             ring.setAltitudeMode(CLAMP).setTessellate(true);
         } else if (altitude.getType() == GND) {
+            alt = altitude.getValue();
             ring.setAltitudeMode(RELATIVE);
         } else {
+            alt = altitude.getValue();
             ring.setAltitudeMode(ABSOLUTE);
         }
         
@@ -203,7 +211,9 @@ public class AirspaceConverter {
     private Polygon createPolygon(List<Point> points, Altitude altitude) {
         Polygon polygon = new Polygon();
         polygon.setOuterBoundaryIs(createRing(points, altitude));
-        if (altitude == null || altitude.getValue() == 0) {
+        if (altitude == null) {
+            // empty
+        } else if (altitude.getValue() == 0) {
             polygon.setAltitudeMode(CLAMP).setTessellate(true);
         } else if (altitude.getType() == GND) {
             polygon.setAltitudeMode(RELATIVE);
@@ -213,24 +223,32 @@ public class AirspaceConverter {
         return polygon;
     }
     
-    private MultiGeometry createSide(List<Point> points, double floor, double ceiling) {
+    private MultiGeometry createSide(List<Point> points, Altitude floor, Altitude ceiling) {
         MultiGeometry geometry = new MultiGeometry();
+        AltitudeMode mode;
+        if (floor.getValue() == 0) {
+            mode = (ceiling.getType() == GND) ? RELATIVE : ABSOLUTE;
+        } else if (floor.getType() == GND) {
+            mode = RELATIVE;
+        } else {
+            mode = ABSOLUTE;
+        }
         Coord coord;
         if (points.size() >= 2) {
             Point last = points.get(0);
             for (int i = 1; i < points.size(); i++) {
                 Point point = points.get(i);
                 LinearRing ring = new LinearRing();
-                coord = new Coord(last.getLatitude(), last.getLongitude(), floor);
+                coord = new Coord(last.getLatitude(), last.getLongitude(), floor.getValue());
                 ring.add(coord);
-                coord = new Coord(point.getLatitude(), point.getLongitude(), floor);
+                coord = new Coord(point.getLatitude(), point.getLongitude(), floor.getValue());
                 ring.add(coord);
-                coord = new Coord(point.getLatitude(), point.getLongitude(), ceiling);
+                coord = new Coord(point.getLatitude(), point.getLongitude(), ceiling.getValue());
                 ring.add(coord);
-                coord = new Coord(last.getLatitude(), last.getLongitude(), ceiling);
+                coord = new Coord(last.getLatitude(), last.getLongitude(), ceiling.getValue());
                 ring.add(coord);
                 ring.close();
-                geometry.add(new Polygon().setOuterBoundaryIs(ring).setAltitudeMode(AltitudeMode.ABSOLUTE));
+                geometry.add(new Polygon().setOuterBoundaryIs(ring).setAltitudeMode(mode).setTessellate(mode == CLAMP));
                 last = point;
             }
         }
@@ -242,18 +260,18 @@ public class AirspaceConverter {
         Altitude floor = airspace.getFloor();
         
         StringBuilder builder = new StringBuilder();
-        builder.append(DESC_INDENT).append("Name: ").append(airspace.getName()); 
-        builder.append(DESC_INDENT).append("Class: ").append(airspace.getType()); 
+        builder.append(DESC_INDENT).append("    Name: ").append(airspace.getName()); 
+        builder.append(DESC_INDENT).append("    Class: ").append(airspace.getType()); 
         if (airspace.getComment() != null) {
             builder.append(" ").append(airspace.getComment());
         }
         if (ceiling != null) {
-            builder.append(DESC_INDENT).append("Ceiling: ").append(ceiling.toDisplayValue()); 
+            builder.append(DESC_INDENT).append("    Ceiling: ").append(ceiling.toDisplayValue()); 
         }
         if (airspace.getFloor() != null) {
-            builder.append(DESC_INDENT).append("Floor: ").append(floor.toDisplayValue());
+            builder.append(DESC_INDENT).append("    Floor: ").append(floor.toDisplayValue());
         }
-        builder.append(DESC_INDENT).append("Line: ").append(airspace.getLineNumber());
+        builder.append(DESC_INDENT).append("    Line: ").append(airspace.getLineNumber());
         builder.append(DESC_INDENT);
         String description = builder.toString();
         return description;
@@ -293,6 +311,7 @@ public class AirspaceConverter {
         for (Segment segment : segments) {
             points.addAll(segment.getPoints(STEP));
         }
+        points.add(points.get(0));
         
         int size = points.size();
         if (size < 4)
