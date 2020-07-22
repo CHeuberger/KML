@@ -1,8 +1,6 @@
-/build/
-/.settings/
-/*.kml
-/*.txt
 *~
 *.swp
 *.bak
 *.orig
+/build/
+/.settings/
