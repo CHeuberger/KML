@@ -48,6 +48,17 @@ public class AirspaceConverter {
         if (airspaces == null) throw new IllegalArgumentException("null");
         
         Document document = new Document(name);
+
+        Folder ground = new Folder("GROUND");
+        for (Airspace airspace : airspaces) {
+            if (airspace.getLineNumber() == 0 && airspace.getType() == null)
+                continue;
+            if (airspace.getName() != null && !airspace.getSegments().isEmpty() && airspace.getFloor() != null) {
+                ground.add(createGround(airspace));
+            }
+        }
+        document.add(ground);
+        
         Map<AirspaceType, Airspace> templates = new HashMap<AirspaceType, Airspace>(); 
         for (Airspace airspace : airspaces) {
             if (airspace.getLineNumber() == 0 && airspace.getType() == null)
@@ -84,7 +95,7 @@ public class AirspaceConverter {
             Altitude floor = airspace.getFloor();
             
             String description = createDescription(airspace);
-            List<Point> points = getPoints(airspace.getSegments(), folder);
+            List<Point> points = getPoints(airspace.getSegments());
             
             Style style = createStyle(airspace);
             URI styleUrl = null;
@@ -141,23 +152,36 @@ public class AirspaceConverter {
                 folder.add(placemark);
             }
             
-            if (floor != null && floor.getValue() > 0) {
-                placemark = new Placemark(airspace.getName() + "-Ground", createRing(points, null));
-                placemark.setDescription(description);
-                placemark.setSnippet("");
-                if (airspace.getType() != null) {
-                    try {
-                        placemark.setStyleUrl(new URI("#ground_" + airspace.getType().getCode()));
-                    } catch (URISyntaxException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-                placemark.setVisibility(false);
-                folder.add(placemark);
-
-            }
-            
             return folder;
+        } catch (RuntimeException ex) {
+            System.err.println(airspace);
+            throw ex;
+        }
+    }
+    
+    public Feature createGround(Airspace airspace) {
+        if (airspace == null) throw new IllegalArgumentException("null");
+        
+        Altitude floor = airspace.getFloor();
+        if (floor == null) return null;
+        
+        try {
+            String description = createDescription(airspace);
+            List<Point> points = getPoints(airspace.getSegments());
+            
+            Placemark placemark = new Placemark(airspace.getName() + "-Ground", createRing(points, null));
+            placemark.setDescription(description);
+            placemark.setSnippet("");
+            if (airspace.getType() != null) {
+                try {
+                    placemark.setStyleUrl(new URI("#ground_" + airspace.getType().getCode()));
+                } catch (URISyntaxException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            placemark.setVisibility(false);
+            
+            return placemark;
         } catch (RuntimeException ex) {
             System.err.println(airspace);
             throw ex;
@@ -238,7 +262,7 @@ public class AirspaceConverter {
 
         if (floor.getValue() == 0) {
             Polygon polygon = createPolygon(points, ceiling);
-            polygon.setExtrude(true).setTessellate(true);
+            polygon.setExtrude(true);
             return polygon;
         } 
 
@@ -329,7 +353,7 @@ public class AirspaceConverter {
         return style;
     }
 
-    private List<Point> getPoints(List<Segment> segments, Folder folder) {
+    private List<Point> getPoints(List<Segment> segments) {
         List<Point> points = new ArrayList<Point>();
         for (Segment segment : segments) {
             points.addAll(segment.getPoints(STEP));
