@@ -1,5 +1,27 @@
-* Koordinaten EDDS innere und äußere Sektoren 1.1.2019
-* Ohne Gewähr!
+* Koordinaten EDDS innere und ï¿½uï¿½ere Sektoren 1.1.2019
+* Ohne Gewï¿½hr!
+
+AC CTR
+SB 255,100,100
+SP 0,2,0,255,0,0
+
+AC C
+SB 255,255,150
+SP 0,2,0,255,255,150
+
+AC D
+SB 255,200,150
+SP 0,2,0,255,20,150
+
+AC GP
+SB 100,255,100
+SP 0,2,0,255,0
+
+AC W
+SB 100,100,255
+SP 0,2,0,0,0,255
+
+************************************************************
 
 AC CTR
 AN STUTTGART
@@ -152,7 +174,7 @@ DP 48:29:28 N 009:11:28 E
 
 
 AC D
-AN ALB-SÜD
+AN ALB-Sï¿½D
 AL FL75
 AH FL100
 * by ATC
@@ -332,7 +354,7 @@ DP 48:50:12 N 09:10:06 E
 DP 48:56:34 N 09:05:26 E
 
 AC GP
-AN Jägerhaus innerhalb CTR
+AN Jï¿½gerhaus innerhalb CTR
 AL 3500 MSL
 AH FL 100
 DP 48:46:17 N 09:22:18 E
@@ -343,7 +365,7 @@ DP 48:46:17 N 09:22:18 E
 
 
 AC GP
-AN Jägerhaus I
+AN Jï¿½gerhaus I
 AL 3500 MSL
 AH FL 100
 DP 48:50:12 N 09:10:06 E
@@ -356,7 +378,7 @@ DP 48:48:11 N 09:12:22 E
 DP 48:50:12 N 09:10:06 E
 
 AC GP
-AN Jägerhaus II
+AN Jï¿½gerhaus II
 AL 3500 MSL
 AH FL 100
 DP 48:51:56 N 09:19:28 E

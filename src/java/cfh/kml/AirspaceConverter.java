@@ -48,16 +48,6 @@ public class AirspaceConverter {
         if (airspaces == null) throw new IllegalArgumentException("null");
         
         Document document = new Document(name);
-
-        Folder ground = new Folder("GROUND");
-        for (Airspace airspace : airspaces) {
-            if (airspace.getLineNumber() == 0 && airspace.getType() == null)
-                continue;
-            if (airspace.getName() != null && !airspace.getSegments().isEmpty() && airspace.getFloor() != null) {
-                ground.add(createGround(airspace));
-            }
-        }
-        document.add(ground);
         
         Map<AirspaceType, Airspace> templates = new HashMap<AirspaceType, Airspace>(); 
         for (Airspace airspace : airspaces) {
@@ -74,6 +64,17 @@ public class AirspaceConverter {
                 }
             }
         }
+        
+        Folder ground = new Folder("GROUND");
+        for (Airspace airspace : airspaces) {
+            if (airspace.getLineNumber() == 0 && airspace.getType() == null)
+                continue;
+            if (airspace.getName() != null && !airspace.getSegments().isEmpty() && airspace.getFloor() != null) {
+                ground.add(createGround(airspace));
+            }
+        }
+        document.add(ground);
+
         for (Airspace airspace : airspaces) {
             if (airspace.getLineNumber() == 0 && airspace.getType() == null)
                 continue;
@@ -222,9 +223,9 @@ public class AirspaceConverter {
         double alt;
         if (altitude == null) {
             alt = 0;
+            ring.setAltitudeMode(CLAMP).setTessellate(true);
         } else if (altitude.getValue() == 0) {
             alt = 0;
-            ring.setAltitudeMode(CLAMP).setTessellate(true);
             ring.setAltitudeMode(CLAMP).setTessellate(true);
         } else if (altitude.getType() == GND) {
             alt = altitude.getValue();
@@ -269,33 +270,33 @@ public class AirspaceConverter {
         MultiGeometry geometry = new MultiGeometry();
         if (floor.getType() == GND) {
             if (ceiling.getType() == GND) {
-                addSides(geometry, RELATIVE, points, floor.getValue(), ceiling.getValue());
+                addSides(geometry, RELATIVE, points, floor.getValue(), ceiling.getValue(), true, true);
             } else {
-                addSides(geometry, RELATIVE, points, floor.getValue(), floor.getValue()+SPACE_SEAM);
-                addSides(geometry, ABSOLUTE, points, ceiling.getValue()-SPACE_SEAM, ceiling.getValue());
+                addSides(geometry, RELATIVE, points, floor.getValue(), floor.getValue()+SPACE_SEAM, true, false);
+                addSides(geometry, ABSOLUTE, points, ceiling.getValue()-SPACE_SEAM, ceiling.getValue(), false, true);
                 System.err.println("Space with mixed limits: " + airspace);
             }
         } else {
             if (ceiling.getType() != GND) {
-                addSides(geometry, ABSOLUTE, points, floor.getValue(), ceiling.getValue());
+                addSides(geometry, ABSOLUTE, points, floor.getValue(), ceiling.getValue(), true, true);
             } else {
-                addSides(geometry, ABSOLUTE, points, floor.getValue(), floor.getValue()+SPACE_SEAM);
-                addSides(geometry, RELATIVE, points, ceiling.getValue()-SPACE_SEAM, ceiling.getValue());
+                addSides(geometry, ABSOLUTE, points, floor.getValue(), floor.getValue()+SPACE_SEAM, true, false);
+                addSides(geometry, RELATIVE, points, ceiling.getValue()-SPACE_SEAM, ceiling.getValue(), false, true);
                 System.err.println("Space with mixed limits: " + airspace);
             }
         }
         return geometry;
     }
     
-    private void addSides(MultiGeometry geometry, AltitudeMode mode, List<Point> points, double floor, double ceiling) {
+    private void addSides(MultiGeometry geometry, AltitudeMode mode, List<Point> points, double floor, double ceiling, boolean bottom, boolean top) {
         Point last = points.get(0);
         for (int i = 1; i < points.size(); i++) {
             Point point = points.get(i);
             LinearRing ring = new LinearRing();
             ring.add(new Coord(last.getLatitude(), last.getLongitude(), floor));
-            ring.add(new Coord(point.getLatitude(), point.getLongitude(), floor));
+            if (bottom) ring.add(new Coord(point.getLatitude(), point.getLongitude(), floor));
             ring.add(new Coord(point.getLatitude(), point.getLongitude(), ceiling));
-            ring.add(new Coord(last.getLatitude(), last.getLongitude(), ceiling));
+            if (top) ring.add(new Coord(last.getLatitude(), last.getLongitude(), ceiling));
             ring.close();
             geometry.add(new Polygon().setOuterBoundaryIs(ring).setAltitudeMode(mode).setTessellate(mode == CLAMP));
             last = point;
