@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="D:/TMP/KMLFromOpenAir.jar"/>
+    <jar path="KML/KMLFromOpenAir.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/KML/KMLFromAir.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
@@ -11,11 +11,11 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
-        <javaElement handleIdentifier="=KML/src\/java"/>
-        <file path="/KML/Zander FromOpenAir.launch"/>
-        <file path="/KML/.project"/>
-        <file path="/KML/.classpath"/>
-        <file path="/KML/ZanderFromOpenAir.jardesc"/>
         <file path="/KML/KML FromOpenAir.launch"/>
+        <file path="/KML/Zander FromOpenAir.launch"/>
+        <file path="/KML/ZanderFromOpenAir.jardesc"/>
+        <file path="/KML/.classpath"/>
+        <javaElement handleIdentifier="=KML/src\/java"/>
+        <file path="/KML/.project"/>
     </selectedElements>
 </jardesc>

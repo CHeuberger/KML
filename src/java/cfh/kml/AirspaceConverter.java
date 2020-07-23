@@ -205,7 +205,7 @@ public class AirspaceConverter {
         if (pen != null) {
             Color color = pen.getColor();
             if (color != null) {
-                color = new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()/2);
+                color = new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
                 airspace.setPen(new Pen(pen.getStyle(), pen.getWidth(), color));
                 template = createStyle(airspace);
                 if (template != null) {
