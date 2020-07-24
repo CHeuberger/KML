@@ -95,7 +95,12 @@ public class FromOpenAir {
                     Kml kml = new Kml();
                     kml.add(test);
 
-                    File save = new File(name + ".kml");
+                    File save = new File(file.getParent(), name + ".kml");
+                    if (save.exists()) {
+                        int opt = JOptionPane.showConfirmDialog(null, "Overwrite " + save, "Confirm", JOptionPane.OK_CANCEL_OPTION);
+                        if (opt != JOptionPane.OK_OPTION)
+                            return;
+                    }
                     FileOutputStream output = new FileOutputStream(save);
                     try {
                         kml.marshalTo(output);

@@ -111,8 +111,8 @@ public class ZanderWriter {
      */
     private void segments(Airspace airspace, boolean invert) throws IOException {
         List<Segment> segments = new ArrayList<Segment>(airspace.getSegments());
-        boolean clockwise = isClockwise(segments);
-        if (clockwise != isClockwise2(segments)) {
+        boolean clockwise = isClockwise(airspace);
+        if (clockwise != isClockwise2(airspace)) {
             System.err.printf("%d: inconsistent direction of airspace: %s", airspace.getLineNumber(), airspace.getName());
         }
         String code = (clockwise ^ invert) ? "S " : "I ";
@@ -240,7 +240,7 @@ public class ZanderWriter {
         }
     }
     
-    private String normAltitude(Altitude altitude, boolean upper) throws IOException {
+    private String normAltitude(Altitude altitude, boolean upper) {
         if (altitude == null)
             return upper ? "99999 MSL" : "00000 GND";
         
@@ -273,11 +273,8 @@ public class ZanderWriter {
         return String.format("%s%07.3f", clockwise ? "+" : "-", radius);
     }
     
-    private boolean isClockwise(List<Segment> segments) {
-        List<Point> points = new ArrayList<Point>();
-        for (Segment segment : segments) {
-            points.addAll(segment.getPoints(STEP));
-        }
+    private boolean isClockwise(Airspace airspace) {
+        List<Point> points = airspace.getPoints(STEP);
         Point prev = points.get(points.size()-1);
         double a = 0.0;
         for (Point point : points) {
@@ -289,11 +286,8 @@ public class ZanderWriter {
         return a >= 0;
     }
     
-    private boolean isClockwise2(List<Segment> segments) {
-        List<Point> points = new ArrayList<Point>();
-        for (Segment segment : segments) {
-            points.addAll(segment.getPoints(STEP));
-        }
+    private boolean isClockwise2(Airspace airspace) {
+        List<Point> points = airspace.getPoints(STEP);
         Point prev = points.get(points.size()-1);
         double a = 0;
         for (Point point : points) {

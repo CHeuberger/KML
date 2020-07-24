@@ -2,6 +2,7 @@ package cfh.air;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Airspace {
@@ -102,6 +103,26 @@ public class Airspace {
     
     public List<Segment> getSegments() {
         return Collections.unmodifiableList(segments);
+    }
+   
+    public LinkedList<Point> getPoints(int step) {
+        LinkedList<Point> points = new LinkedList<Point>();
+        for (Segment segment : segments) {
+            List<Point> list = segment.getPoints(step);
+            if (list.isEmpty())
+                continue;
+            if (points.isEmpty() || !points.getLast().equals(list.get(0))) {
+                points.addAll(list);
+            } else {
+                if (list.size() > 1) {
+                    points.addAll(list.subList(1, list.size()));
+                }
+            }
+        }
+        if (!points.getLast().equals(points.get(0))) {
+            points.add(points.get(0));
+        }
+        return points;
     }
     
     @Override

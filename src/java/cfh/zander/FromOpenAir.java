@@ -68,6 +68,8 @@ public class FromOpenAir {
                             return;
                         }
                     }
+                } else {
+                    reader.pushback(line);
                 }
 
                 String name = file.getName();

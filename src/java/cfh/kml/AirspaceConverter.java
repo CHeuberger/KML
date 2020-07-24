@@ -10,9 +10,9 @@ import static cfh.kml.jaxb.AltitudeMode.RELATIVE;
 import java.awt.Color;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +22,6 @@ import cfh.air.Altitude;
 import cfh.air.Brush;
 import cfh.air.Pen;
 import cfh.air.Point;
-import cfh.air.Segment;
 import cfh.kml.jaxb.AltitudeMode;
 import cfh.kml.jaxb.Coord;
 import cfh.kml.jaxb.Document;
@@ -74,6 +73,25 @@ public class AirspaceConverter {
             }
         }
         document.add(ground);
+        
+//        Folder folder = new Folder("POINTS");
+//        for (Airspace airspace : airspaces) {
+//            if (airspace.getLineNumber() == 0 && airspace.getType() == null)
+//                continue;
+//            if (airspace.getName() != null && !airspace.getSegments().isEmpty() && airspace.getFloor() != null) {
+//                List<Point> points = getPoints(airspace);
+//                Folder f = new Folder(airspace.getName());
+//                int i = 1;
+//                for (Point point : points) {
+//                    Placemark  placemark = new Placemark(
+//                        Integer.toString(i++), 
+//                        new cfh.kml.jaxb.Point(point.getLongitude(), point.getLatitude()));
+//                    f.add(placemark.setVisibility(false));
+//                }
+//                folder.add(f);
+//            }
+//        }
+//        document.add(folder);
 
         for (Airspace airspace : airspaces) {
             if (airspace.getLineNumber() == 0 && airspace.getType() == null)
@@ -82,6 +100,7 @@ public class AirspaceConverter {
                 document.add(createAirspace(airspace, templates));
             }
         }
+        
         return document;
     }
     
@@ -96,7 +115,7 @@ public class AirspaceConverter {
             Altitude floor = airspace.getFloor();
             
             String description = createDescription(airspace);
-            List<Point> points = getPoints(airspace.getSegments());
+            List<Point> points = getPoints(airspace);
             
             Style style = createStyle(airspace);
             URI styleUrl = null;
@@ -168,7 +187,7 @@ public class AirspaceConverter {
         
         try {
             String description = createDescription(airspace);
-            List<Point> points = getPoints(airspace.getSegments());
+            List<Point> points = getPoints(airspace);
             
             Placemark placemark = new Placemark(airspace.getName() + "-Ground", createRing(points, null));
             placemark.setDescription(description);
@@ -353,13 +372,9 @@ public class AirspaceConverter {
         
         return style;
     }
-
-    private List<Point> getPoints(List<Segment> segments) {
-        List<Point> points = new ArrayList<Point>();
-        for (Segment segment : segments) {
-            points.addAll(segment.getPoints(STEP));
-        }
-        points.add(points.get(0));
+    
+    private List<Point> getPoints(Airspace airspace) {
+        LinkedList<Point> points = airspace.getPoints(STEP);
         
         int size = points.size();
         if (size < 4)
@@ -373,6 +388,7 @@ public class AirspaceConverter {
         }
         lat /= size;
         lon /= size;
+        
         Point center = new Point(lat, lon);
 
         double total;
