@@ -52,7 +52,7 @@ public class AltitudeTest {
             @FromDataPoints("type")  Type type,
             @FromDataPoints("value") int value
     ) {
-        assumeThat(type, not(Type.FL));
+        assumeThat(type, both(not(Type.FL)).and(not(Type.UNLIM)));
         int feets = (int) (value/0.3048 + 0.5);
         String test = new Altitude(type, value).toDisplayValue();
         

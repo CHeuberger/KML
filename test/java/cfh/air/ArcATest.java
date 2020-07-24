@@ -79,7 +79,7 @@ public class ArcATest {
         startLat = center.getLatitude() + degrees;
         startLon = center.getLongitude();
         endLat = center.getLatitude();
-        endLon = center.getLongitude() - degrees;
+        endLon = center.getLongitude() + degrees;
         
         test = arc.getPoints(0);
         assertThat(test.size(), is (2));
@@ -94,7 +94,7 @@ public class ArcATest {
         startLat = center.getLatitude() - degrees;
         startLon = center.getLongitude();
         endLat = center.getLatitude();
-        endLon = center.getLongitude() + degrees;
+        endLon = center.getLongitude() - degrees;
         
         test = arc.getPoints(0);
         assertThat(test.size(), is (2));

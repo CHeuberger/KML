@@ -106,6 +106,7 @@ public class Airspace {
     }
    
     public LinkedList<Point> getPoints(int step) {
+        if (step < 0) throw new IllegalArgumentException("invalid step: " + step);
         LinkedList<Point> points = new LinkedList<Point>();
         for (Segment segment : segments) {
             List<Point> list = segment.getPoints(step);

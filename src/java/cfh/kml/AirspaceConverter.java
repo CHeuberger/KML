@@ -74,24 +74,24 @@ public class AirspaceConverter {
         }
         document.add(ground);
         
-//        Folder folder = new Folder("POINTS");
-//        for (Airspace airspace : airspaces) {
-//            if (airspace.getLineNumber() == 0 && airspace.getType() == null)
-//                continue;
-//            if (airspace.getName() != null && !airspace.getSegments().isEmpty() && airspace.getFloor() != null) {
-//                List<Point> points = getPoints(airspace);
-//                Folder f = new Folder(airspace.getName());
-//                int i = 1;
-//                for (Point point : points) {
-//                    Placemark  placemark = new Placemark(
-//                        Integer.toString(i++), 
-//                        new cfh.kml.jaxb.Point(point.getLongitude(), point.getLatitude()));
-//                    f.add(placemark.setVisibility(false));
-//                }
-//                folder.add(f);
-//            }
-//        }
-//        document.add(folder);
+        Folder folder = new Folder("POINTS");
+        for (Airspace airspace : airspaces) {
+            if (airspace.getLineNumber() == 0 && airspace.getType() == null)
+                continue;
+            if (airspace.getName() != null && !airspace.getSegments().isEmpty() && airspace.getFloor() != null) {
+                List<Point> points = getPoints(airspace);
+                Folder f = new Folder(airspace.getName());
+                int i = 1;
+                for (Point point : points) {
+                    Placemark  placemark = new Placemark(
+                        Integer.toString(i++), 
+                        new cfh.kml.jaxb.Point(point.getLongitude(), point.getLatitude()));
+                    f.add(placemark.setVisibility(false));
+                }
+                folder.add(f);
+            }
+        }
+        document.add(folder);
 
         for (Airspace airspace : airspaces) {
             if (airspace.getLineNumber() == 0 && airspace.getType() == null)
@@ -130,7 +130,7 @@ public class AirspaceConverter {
             if (ceiling != null) {
                 Geometry geometry;
                 
-                geometry = createPolygon(points, ceiling);
+                geometry = createPolygon(points, ceiling, false);
                 placemark = new Placemark(airspace.getName() + "-Top", geometry);
                 placemark.setDescription(description);
                 placemark.setSnippet("");
@@ -160,7 +160,7 @@ public class AirspaceConverter {
             }
             
             if (floor != null) {
-                Geometry geometry = createPolygon(points, floor);
+                Geometry geometry = createPolygon(points, floor, false);
                 placemark = new Placemark(airspace.getName() + "-Bottom", geometry);
                 placemark.setDescription(description);
                 placemark.setSnippet("");
@@ -189,7 +189,7 @@ public class AirspaceConverter {
             String description = createDescription(airspace);
             List<Point> points = getPoints(airspace);
             
-            Placemark placemark = new Placemark(airspace.getName() + "-Ground", createRing(points, null));
+            Placemark placemark = new Placemark(airspace.getName() + "-Ground", createRing(points, null, false));
             placemark.setDescription(description);
             placemark.setSnippet("");
             if (airspace.getType() != null) {
@@ -235,7 +235,7 @@ public class AirspaceConverter {
         return template;
     }
     
-    private LinearRing createRing(List<Point> points, Altitude altitude) {
+    private LinearRing createRing(List<Point> points, Altitude altitude, boolean extrude) {
         assert points != null;
         
         LinearRing ring = new LinearRing();
@@ -248,10 +248,10 @@ public class AirspaceConverter {
             ring.setAltitudeMode(CLAMP).setTessellate(true);
         } else if (altitude.getType() == GND) {
             alt = altitude.getValue();
-            ring.setAltitudeMode(RELATIVE);
+            ring.setAltitudeMode(RELATIVE).setExtrude(extrude);
         } else {
             alt = altitude.getValue();
-            ring.setAltitudeMode(ABSOLUTE);
+            ring.setAltitudeMode(ABSOLUTE).setExtrude(extrude);
         }
         
         for (Point point : points) {
@@ -261,9 +261,9 @@ public class AirspaceConverter {
         return ring;
     }
     
-    private Polygon createPolygon(List<Point> points, Altitude altitude) {
+    private Polygon createPolygon(List<Point> points, Altitude altitude, boolean extrude) {
         Polygon polygon = new Polygon();
-        polygon.setOuterBoundaryIs(createRing(points, altitude));
+        polygon.setOuterBoundaryIs(createRing(points, altitude, extrude));
         if (altitude == null) {
             // empty
         } else if (altitude.getValue() == 0) {
@@ -281,7 +281,7 @@ public class AirspaceConverter {
             return null;
 
         if (floor.getValue() == 0) {
-            Polygon polygon = createPolygon(points, ceiling);
+            Polygon polygon = createPolygon(points, ceiling, true);
             polygon.setExtrude(true);
             return polygon;
         } 
@@ -404,7 +404,7 @@ public class AirspaceConverter {
             total = calcAngle(points, center);
         }
         
-        if (total > 2*PI-0.2) {
+        if (total < -PI) {
             Collections.reverse(points);
             total = -total;
         }

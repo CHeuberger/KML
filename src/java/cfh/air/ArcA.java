@@ -17,9 +17,9 @@ public class ArcA implements Segment {
 
     /** nautical mile */
     private final double radius;
-    /** degrees */
+    /** degrees, 0° is north, 90° is east */
     private final double startAngle;
-    /** degrees */
+    /** degrees, 0° is north, 90° is east */
     private final double endAngle;
     
     private final Point center;
@@ -28,7 +28,7 @@ public class ArcA implements Segment {
     /**
      * @param radius nautical mile
      * @param startAngle degrees, 0° is north, 90° is east
-     * @param endAngle degrees
+     * @param endAngle degrees, 0° is north, 90° is east
      * @param center 
      * @param clockwise
      */

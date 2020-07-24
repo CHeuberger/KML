@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +44,7 @@ public class GraphPanel extends JPanel {
             }
         }
         boundingBox = bound;
+        System.out.println(bound); // TODO delete
     }
     
     @Override
@@ -62,12 +64,13 @@ public class GraphPanel extends JPanel {
                 double scaleY = (getHeight()-2*GAP) / boundingBox.getHeight();
                 double scale = Math.min(scaleX, scaleY);
                 gg.translate(GAP, GAP);
-                gg.scale(scale, scale);
-                gg.translate(-boundingBox.getMinX(), -boundingBox.getMinY());
+                gg.scale(scale, -scale);
+                gg.translate(-boundingBox.getMinX(), -boundingBox.getMaxY());
                 gg.setStroke(new BasicStroke((float) (1/scale)));
                 
                 for (Airspace airspace : airspaces) {
                     if (airspace.getName() != null) {
+                        System.out.println(airspace.getName());
                         Point last = null;
                         gg.setColor(SEGMENT_COLOR);
                         List<Segment> segments = airspace.getSegments();
@@ -75,7 +78,8 @@ public class GraphPanel extends JPanel {
                             last = segment.draw(gg, last);
                         }
                         if (last != null) {
-                            segments.get(0).draw(gg, last);
+                            Point p = segments.get(0).getPoints(0).get(0);
+                            gg.draw(new Line2D.Double(last.getLongitude(), last.getLatitude(), p.getLongitude(), p.getLatitude()));
                         }
                     }
                 }

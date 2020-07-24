@@ -15,28 +15,16 @@ public class Point implements Segment {
     /** Error for comparing points. */
     private static final double ERR = 1E-6;
     
-    /** degrees */
+    /** degrees [-90, +90] (North = +90) */
     private final double latitude;
-    /** degrees */
+    /** degrees (-180, +180] (positive = East) */
     private final double longitude;
     
     /**
-     * @param latitude degrees
-     * @param longitude degrees
+     * @param latitude degrees [-90, +90] (North = +90) 
+     * @param longitude degrees (positive = East)
      */
     public Point(double latitude, double longitude) {
-//        while (latitude < -270) latitude += 360;
-//        while (latitude > 270) latitude -= 360;
-//        if (latitude < -90) {
-//            latitude = -180 - latitude;
-//            longitude += 180;
-//        } else if (latitude > 90) {
-//            latitude -= 180;
-//            longitude += 180;
-//        }
-//        while (longitude < -180) longitude += 360;
-//        while (longitude > 180) longitude -= 360;
-        
         if (latitude < -90-ERR || latitude > 90+ERR) throw new IllegalArgumentException("latitude: " + latitude);
         
         if (latitude < -90) latitude = -90;
@@ -51,10 +39,12 @@ public class Point implements Segment {
         this.longitude = longitude;
     }
 
+    /** degrees [-90, +90] (North = +90) */
     public double getLatitude() {
         return latitude;
     }
     
+    /** degrees (-180, +180] (positive = East) */
     public double getLongitude() {
         return longitude;
     }
@@ -62,7 +52,7 @@ public class Point implements Segment {
     /**
      * Initial bearing to another point.
      * @param point destination point
-     * @return radians angle from this point to the given point, 0 is north, PI/2 is east
+     * @return angle in radians from this point to the given point, 0 is north, PI/2 is east
      */
     public double angleTo(Point point) {
         double dx = cos(toRadians(this.latitude)) * (point.longitude - this.longitude);
@@ -81,9 +71,6 @@ public class Point implements Segment {
      * @return degrees <i>distance</i> between the two points
      */
     public double distTo(Point point) {
-//        return toDegrees(acos(sin(toRadians(latitude))*sin(toRadians(point.latitude))+
-//                cos(toRadians(latitude))*cos(toRadians(point.latitude))
-//                        *cos(toRadians(longitude)-toRadians(point.longitude))));
         double dx = cos(toRadians(this.latitude)) * (point.longitude - this.longitude);
         double dy = point.latitude - this.latitude;
         while (dx < -180) dx += 360;
@@ -93,7 +80,7 @@ public class Point implements Segment {
     
     /**
      * @param dist in degrees
-     * @param angle in radians
+     * @param angle in radians, 0 is north, PI/2 is east
      * @return
      */
     public Point polar(double dist, double angle) {

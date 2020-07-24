@@ -106,14 +106,14 @@ public class ArcB implements Segment {
             for (Point point : points) {
                 double lon = point.getLongitude();
                 if (lon < x) {
-                    w += lon - x;
+                    w -= lon - x;
                     x = lon;
                 } else if (lon > x + w) {
                     w = lon - x;
                 }
                 double lat = point.getLatitude();
                 if (lat < y) {
-                    h += lat - y;
+                    h -= lat - y;
                     y = lat;
                 } else if (lat > y + h) {
                     h = lat - y;
@@ -123,13 +123,15 @@ public class ArcB implements Segment {
         return new Rectangle2D.Double(x, y, w, h);
     }
     
-//    For any two points (p,q) and (r,s) on the circumference/path of the ellipse, with the ellipse center at the origin (0,0):
-//
-//        a^2 = (p^2)*(s^2) - (r^2)*(q^2) ) / (s^2 - q^2)
-//        b^2 = (r^2)*(q^2) - (p^2)*(s^2) ) / (p^2 - r^2)
-//    
-//    p = start.x - center.x; q = start.y - center.y;
-//    r = end.x   - center.y; s = end.y   - center.y;
+    /*
+     * For any two points (p,q) and (r,s) on the circumference/path of the ellipse, with the ellipse center at the origin (0,0):
+     * 
+     *     a^2 = (p^2)*(s^2) - (r^2)*(q^2) ) / (s^2 - q^2)
+     *     b^2 = (r^2)*(q^2) - (p^2)*(s^2) ) / (p^2 - r^2)
+     *
+     * p = start.x - center.x; q = start.y - center.y;
+     * r = end.x   - center.y; s = end.y   - center.y;
+    */
 
     @Override
     public Point draw(Graphics2D gg, Point last) {
@@ -140,10 +142,21 @@ public class ArcB implements Segment {
         
         double w = (p*p*s*s - r*r*q*q) / (s*s - q*q);
         double h = (r*r*q*q - p*p*s*s) / (p*p - r*r);
+        w = sqrt(w<0 ? -w : w);
+        h = sqrt(h<0 ? -h : h);
         
-        double startA = atan2(q, p);
-        double endA = atan2(s, r);
-        
+        double startA = - toDegrees(atan2(q, p));
+        double endA = - toDegrees(atan2(s, r));
+        if (clockwise) {
+            while (endA <= startA) {
+                endA += 360;
+            }
+        } else {
+            while (startA <= endA) {
+                startA += 360;
+            }
+        }
+
         if (last != null) {
             gg.draw(new Line2D.Double(last.getLongitude(), last.getLatitude(), start.getLongitude(), start.getLatitude()));
         }

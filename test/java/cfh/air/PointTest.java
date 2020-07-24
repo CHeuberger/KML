@@ -30,10 +30,10 @@ public class PointTest {
     private static final double ERR = 1E-5;
 
     @DataPoints("lat")
-    public static double[] latitudes = { 0, 1, -1, 10, -10, -80, 80, 90, -90 };
+    public static double[] latitudes =  { 0, 1, -1, 10, -10, -80,  80,  90,  -90 };
 
     @DataPoints("lon")
-    public static double[] longitudes = { 0, 1, -1, 10, -10, 90, -90, 170, -170, 180 };
+    public static double[] longitudes = { 0, 1, -1, 10, -10,  90, -90, 170, -170, 180 };
 
 
     @Theory
@@ -53,8 +53,8 @@ public class PointTest {
     public void testAngleTo() {
         Point north = new Point(21, 0);
         Point south = new Point(19, 0);
-        Point east = new Point(20, -1);
-        Point west = new Point(20, 1);
+        Point east = new Point(20, +1);
+        Point west = new Point(20, -1);
         double angle;
         
         angle = south.angleTo(north);
@@ -72,8 +72,8 @@ public class PointTest {
     
     @Test
     public void testAngleTo_far() {
-        Point fareast = new Point(0, -170);
-        Point farwest = new Point(0, 170);
+        Point fareast = new Point(0, +170);
+        Point farwest = new Point(0, -170);
         double angle;
         
         angle = fareast.angleTo(farwest);
@@ -112,10 +112,10 @@ public class PointTest {
     public void testPolar() {
         Point zero = new Point(0, 0);
         double dist = 1;
-        Point north = new Point(dist, 0);
-        Point east = new Point(0, -dist);
-        Point south = new Point(-dist, 0);
-        Point west = new Point(0, dist);
+        Point north = new Point(+dist,     0);
+        Point east = new Point(     0, +dist);
+        Point south = new Point(-dist,     0);
+        Point west = new Point(     0, -dist);
         Point test;
         
         test = zero.polar(dist, N);

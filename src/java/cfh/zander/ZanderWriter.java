@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import cfh.air.Airspace;
 import cfh.air.AirspaceType;
 import cfh.air.Altitude;
+import cfh.air.Altitude.Type;
 import cfh.air.ArcA;
 import cfh.air.ArcB;
 import cfh.air.Circle;
@@ -243,6 +244,8 @@ public class ZanderWriter {
     private String normAltitude(Altitude altitude, boolean upper) {
         if (altitude == null)
             return upper ? "99999 MSL" : "00000 GND";
+        if (altitude.getType() == Type.UNLIM)
+            return "99999 MSL";
         
         return String.format("%05d %s", altitude.getValueFeet(), altitude.getType());
     }
@@ -289,6 +292,7 @@ public class ZanderWriter {
     private boolean isClockwise2(Airspace airspace) {
         List<Point> points = airspace.getPoints(STEP);
         Point prev = points.get(points.size()-1);
+        if (prev.equals(points.get(0))) prev = null;
         double a = 0;
         for (Point point : points) {
             if (prev != null) {
