@@ -1,3 +1,12 @@
 # KML
 
-OpenAir-KML Converter
+OpenAir-KML Converter.
+
+*use at your own risk - no warranties!*
+
+
+
+### Requirements
+
+Java 8 (JRE8)
+

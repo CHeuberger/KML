@@ -12,8 +12,6 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.jspresso.contrib.sjsplugin.spock.nature</nature>
-		<nature>org.eclipse.jdt.groovy.core.groovyNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 	<linkedResources>
