@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     02.05.2021                                                        
+     
+     KML
+                   
+     Carlos F. Heuberger                                                                
+     ====================================================================== -->
+<project name="KML" default="dist" basedir=".">
+    
+    <description>
+        Converters to KML (Google Earth) files and Zander files.
+    </description>
+    
+    <property name="src.dir" location="src"/>
+    <property name="java.dir" location="${src.dir}/java"/>
+    <property name="res.dir" location="${src.dir}/resources"/>
+    
+    <property name="build.dir" location="build"/>
+    <property name="dist.dir" location="dist"/>
+        
+    <property name="zander.manifest.file" value="${src.dir}/zander-manifest.txt"/>
+    <property name="zander.jar.file" value="${dist.dir}/ZanderFromOpenAir.jar"/>
+        
+    <property name="kml.manifest.file" value="${src.dir}/kml-manifest.txt"/>
+    <property name="kml.jar.file" value="${dist.dir}/KMLFromOpenAir.jar"/>
+        
+    <property name="debug.flag" value="true"/>
+    <property name="deprecation.flag" value="true"/>
+    
+    
+    <target name="-init">
+        <tstamp />
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${dist.dir}" />
+    </target>
+    
+    
+    <target name="clean" description="Remove generated files and directories.">
+        <delete dir="${build.dir}" />
+        <delete dir="${dist.dir}" />
+    </target>
+    
+    
+    <target name="dist" depends="kml,zander" description="Makes distribution.">
+    </target>
+    
+    
+    <target name="kml" depends="compile,resources" description="Create JAR.">
+        <jar 
+            destfile="${kml.jar.file}" 
+            basedir="${build.dir}"
+            manifest="${kml.manifest.file}">
+        </jar>
+    </target>
+    
+    
+    <target name="zander" depends="compile,resources" description="Create JAR.">
+        <jar 
+            destfile="${zander.jar.file}" 
+            basedir="${build.dir}"
+            manifest="${zander.manifest.file}">
+        </jar>
+    </target>
+    
+    
+    <target name="compile" depends="-init" description="Compile the sources.">
+        <javac 
+            srcdir="${java.dir}" 
+            destdir="${build.dir}" 
+            debug="${debug.flag}"
+            deprecation="${deprecation.flag}"
+            includeAntRuntime="false"
+            >
+        </javac>
+    </target>
+    
+    
+    <target name="resources" depends="-init" description="Copy resources.">
+        <copy todir="${build.dir}">
+            <fileset dir="${res.dir}" />
+        </copy>
+    </target>
+    
+</project>
+
