@@ -20,7 +20,7 @@ import cfh.air.PushbackLineReader;
 
 public class FromOpenAir {
     
-    private static final String version = "ZanderFromOpenAir v1.1 by CFH";
+    private static final String version = "ZanderFromOpenAir by CFH";
     
 
     private static final String PREF_DIRECTORY = "directory";
