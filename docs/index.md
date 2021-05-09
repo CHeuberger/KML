@@ -1,11 +1,11 @@
-# OpenAir-KML Converter v0.01
+# OpenAir-KML Converter
 
 OpenAir converter.
 
 Programs to convert airspace data from OpenAir format to:
 
 - KML format (Google Earth)
-- Zander format
+- [Zander](Zander.md) format
 
 
 
@@ -20,4 +20,6 @@ Java 8 (`JRE8`) must be installed. Version `8u202` is recommended, license of ne
 
 
 [Project](https://github.com/fg-k/KML)
+
+[Releases](https://github.com/fg-k/KML/releases)
 
